@@ -1,0 +1,52 @@
+package com.example.cookitup.ui;
+
+import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
+import com.example.cookitup.R;
+import com.example.cookitup.ui.favorite.FavoriteFragment;
+import com.example.cookitup.ui.home.HomeFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+
+        bottomNav.setOnItemSelectedListener(item -> {
+            Fragment selectedFragment = null;
+            int id = item.getItemId();
+            if (id == R.id.nav_home) {
+                selectedFragment = new HomeFragment();
+            } else if (id == R.id.nav_favorite) {
+                selectedFragment = new FavoriteFragment();
+            }
+            if (selectedFragment != null) {
+                return loadFragment(selectedFragment);
+            }
+            return false;
+        });
+
+        // Load default fragment
+        if (savedInstanceState == null) {
+            bottomNav.setSelectedItemId(R.id.nav_home);
+        }
+    }
+
+    private boolean loadFragment(Fragment fragment) {
+        if (fragment != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .commit();
+            return true;
+        }
+        return false;
+    }
+}
