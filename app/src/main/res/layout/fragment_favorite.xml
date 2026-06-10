@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background"
+        android:background="@color/primary"
         android:orientation="horizontal"
         android:paddingHorizontal="16dp"
         android:paddingVertical="12dp"
@@ -27,15 +27,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Resep Favorit"
-                android:textColor="@color/primary"
+                android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Koleksi masakan tersimpan"
-                android:textColor="@color/on_surface_variant"
+                android:text="Resep yang Anda simpan"
+                android:textColor="@color/inverse_primary"
                 android:textSize="12sp" />
         </LinearLayout>
 
@@ -44,7 +44,7 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:src="@drawable/ic_menu_month"
-            app:tint="@color/primary"
+            app:tint="@color/white"
             android:padding="6dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
@@ -56,15 +56,40 @@
         android:layout_height="match_parent"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/tv_empty"
+        <LinearLayout
+            android:id="@+id/layout_empty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Belum ada resep favorit."
-            android:textSize="16sp"
-            android:textColor="@color/primary_green"
-            android:visibility="gone"/>
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@android:drawable/btn_star_big_off"
+                app:tint="@color/outline_variant"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:id="@+id/tv_empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Belum ada favorit"
+                android:textSize="18sp"
+                android:textColor="@color/on_surface"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:text="Anda belum menyimpan resep apa pun. Mulai cari resep untuk menyelamatkan bahan makanan Anda!"
+                android:textSize="14sp"
+                android:textColor="@color/on_surface_variant"
+                android:textAlignment="center"/>
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_favorite"

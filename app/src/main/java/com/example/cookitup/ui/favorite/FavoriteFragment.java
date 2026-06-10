@@ -29,7 +29,7 @@ import java.util.concurrent.Executors;
 public class FavoriteFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private TextView tvEmpty;
+    private View emptyStateLayout;
     private FavoriteAdapter adapter;
     private MealHelper mealHelper;
 
@@ -44,7 +44,7 @@ public class FavoriteFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         recyclerView = view.findViewById(R.id.recycler_view_favorite);
-        tvEmpty = view.findViewById(R.id.tv_empty);
+        emptyStateLayout = view.findViewById(R.id.layout_empty);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new FavoriteAdapter();
@@ -94,9 +94,9 @@ public class FavoriteFragment extends Fragment {
             handler.post(() -> {
                 adapter.setData(favorites);
                 if (favorites.size() == 0) {
-                    tvEmpty.setVisibility(View.VISIBLE);
+                    emptyStateLayout.setVisibility(View.VISIBLE);
                 } else {
-                    tvEmpty.setVisibility(View.GONE);
+                    emptyStateLayout.setVisibility(View.GONE);
                 }
             });
         });

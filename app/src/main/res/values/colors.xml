@@ -11,6 +11,9 @@
     <color name="secondary_container">#cfe7bc</color>
     <color name="on_secondary_container">#546946</color>
     <color name="outline_variant">#c4c8ba</color>
+    <color name="inverse_primary">#add191</color>
+    <color name="error_container">#ffdad6</color>
+    <color name="on_error_container">#93000a</color>
     
     <!-- Fallback for existing references -->
     <color name="primary_green">#3B6D11</color>
