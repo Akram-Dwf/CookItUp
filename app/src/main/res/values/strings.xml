@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">CookItUp</string>
+    <string name="hint_ingredient">Masukkan bahan</string>
+    <string name="btn_search">Cari Resep</string>
+    <string name="btn_favorite">Simpan ke Favorit</string>
+    <string name="txt_instructions">Cara Memasak</string>
+    <string name="nav_home">Cari Resep</string>
+    <string name="nav_favorite">Favorit</string>
+    <string name="msg_no_data">Tidak ada data</string>
+    <string name="msg_no_internet">Tidak ada koneksi internet</string>
+    <string name="txt_dark_mode">Mode Gelap</string>
+    <string name="txt_subtitle">Masak dari bahan yang ada di dapur</string>
 </resources>

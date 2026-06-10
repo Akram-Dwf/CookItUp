@@ -45,6 +45,15 @@ public class MainActivity extends AppCompatActivity {
                     .beginTransaction()
                     .replace(R.id.fragment_container, fragment)
                     .commit();
+
+            androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+            if (fragment instanceof HomeFragment) {
+                toolbar.setVisibility(android.view.View.GONE);
+            } else if (fragment instanceof FavoriteFragment) {
+                toolbar.setVisibility(android.view.View.VISIBLE);
+                toolbar.setTitle(getString(R.string.nav_favorite));
+                toolbar.setSubtitle("");
+            }
             return true;
         }
         return false;

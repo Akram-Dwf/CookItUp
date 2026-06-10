@@ -45,6 +45,13 @@ public class DetailActivity extends AppCompatActivity {
         tvInstructions = findViewById(R.id.tv_instructions);
         btnFavorite = findViewById(R.id.btn_favorite);
 
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(v -> finish());
+
         mealHelper = MealHelper.getInstance(this);
 
         String mealId = getIntent().getStringExtra("meal_id");

@@ -2,6 +2,7 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.CookItUp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">@color/primary_green</item>
+        <item name="colorPrimaryVariant">@color/button_main</item>
     </style>
 </resources>

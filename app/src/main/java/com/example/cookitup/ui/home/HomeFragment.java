@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,8 +28,11 @@ import com.example.cookitup.model.MealResponse;
 import com.example.cookitup.network.ApiService;
 import com.example.cookitup.network.RetrofitClient;
 import com.example.cookitup.ui.DetailActivity;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -38,12 +42,15 @@ import retrofit2.Response;
 public class HomeFragment extends Fragment {
 
     private EditText etIngredient;
-    private Button btnSearch, btnRefresh;
+    private Button btnAddIngredient, btnSearch, btnRefresh;
+    private ChipGroup chipGroupIngredients;
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
     private MealAdapter adapter;
     private Switch switchTheme;
     private SharedPreferences sharedPreferences;
+
+    private ArrayList<String> ingredients = new ArrayList<>();
 
     @Nullable
     @Override
@@ -56,6 +63,8 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         etIngredient = view.findViewById(R.id.et_ingredient);
+        btnAddIngredient = view.findViewById(R.id.btn_add_ingredient);
+        chipGroupIngredients = view.findViewById(R.id.chip_group_ingredients);
         btnSearch = view.findViewById(R.id.btn_search);
         btnRefresh = view.findViewById(R.id.btn_refresh);
         progressBar = view.findViewById(R.id.progress_bar);
@@ -81,67 +90,116 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        // Load last ingredient
-        String lastIngredient = sharedPreferences.getString("last_ingredients", "");
-        if (!lastIngredient.isEmpty()) {
-            etIngredient.setText(lastIngredient);
-        }
-
-        btnSearch.setOnClickListener(v -> {
+        btnAddIngredient.setOnClickListener(v -> {
             String ingredient = etIngredient.getText().toString().trim();
             if (!ingredient.isEmpty()) {
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("last_ingredients", ingredient);
-                editor.apply();
-                searchMeals(ingredient);
+                if (!ingredients.contains(ingredient)) {
+                    ingredients.add(ingredient);
+                    addChip(ingredient);
+                }
+                etIngredient.setText("");
+            }
+        });
+
+        btnSearch.setOnClickListener(v -> {
+            if (ingredients.isEmpty()) {
+                Toast.makeText(getContext(), getString(R.string.hint_ingredient), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getContext(), "Please enter an ingredient", Toast.LENGTH_SHORT).show();
+                searchMeals();
             }
         });
 
         btnRefresh.setOnClickListener(v -> {
-            String ingredient = etIngredient.getText().toString().trim();
-            if (!ingredient.isEmpty()) {
-                searchMeals(ingredient);
+            if (!ingredients.isEmpty()) {
+                searchMeals();
             }
         });
     }
 
-    private void searchMeals(String ingredient) {
+    private void addChip(String ingredient) {
+        Chip chip = new Chip(getContext());
+        chip.setText(ingredient);
+        chip.setCloseIconVisible(true);
+        chip.setChipBackgroundColorResource(R.color.light_green);
+        chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary_green));
+        chip.setOnCloseIconClickListener(v -> {
+            chipGroupIngredients.removeView(chip);
+            ingredients.remove(ingredient);
+        });
+        chipGroupIngredients.addView(chip);
+    }
+
+    private void searchMeals() {
         progressBar.setVisibility(View.VISIBLE);
         btnRefresh.setVisibility(View.GONE);
+        recyclerView.setAdapter(null);
 
         ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
-        Call<MealResponse> call = apiService.getMealsByIngredient(ingredient);
+        HashMap<String, Meal> uniqueMeals = new HashMap<>();
+        final int[] completedCalls = {0};
+        final boolean[] hasError = {false};
 
-        call.enqueue(new Callback<MealResponse>() {
-            @Override
-            public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
-                progressBar.setVisibility(View.GONE);
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Meal> meals = response.body().getMeals();
-                    if (meals != null) {
-                        adapter = new MealAdapter(new ArrayList<>(meals));
-                        recyclerView.setAdapter(adapter);
-
-                        adapter.setOnItemClickCallback(data -> {
-                            Intent intent = new Intent(getActivity(), DetailActivity.class);
-                            intent.putExtra("meal_id", data.getIdMeal());
-                            intent.putExtra("meal_name", data.getStrMeal());
-                            startActivity(intent);
-                        });
-                    } else {
-                        Toast.makeText(getContext(), "No meals found", Toast.LENGTH_SHORT).show();
+        for (String ingredient : ingredients) {
+            Call<MealResponse> call = apiService.getMealsByIngredient(ingredient);
+            call.enqueue(new Callback<MealResponse>() {
+                @Override
+                public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
+                    completedCalls[0]++;
+                    if (response.isSuccessful() && response.body() != null) {
+                        List<Meal> meals = response.body().getMeals();
+                        if (meals != null) {
+                            for (Meal meal : meals) {
+                                uniqueMeals.put(meal.getIdMeal(), meal);
+                            }
+                        }
                     }
+                    checkCompletion(completedCalls[0], hasError[0], uniqueMeals);
+                }
+
+                @Override
+                public void onFailure(Call<MealResponse> call, Throwable t) {
+                    completedCalls[0]++;
+                    hasError[0] = true;
+                    checkCompletion(completedCalls[0], hasError[0], uniqueMeals);
+                }
+            });
+        }
+    }
+
+    private void checkCompletion(int completedCount, boolean hasError, HashMap<String, Meal> uniqueMeals) {
+        if (completedCount == ingredients.size()) {
+            progressBar.setVisibility(View.GONE);
+            if (hasError && uniqueMeals.isEmpty()) {
+                btnRefresh.setVisibility(View.VISIBLE);
+                Toast.makeText(getContext(), getString(R.string.msg_no_internet), Toast.LENGTH_SHORT).show();
+            } else if (uniqueMeals.isEmpty()) {
+                Toast.makeText(getContext(), getString(R.string.msg_no_data), Toast.LENGTH_SHORT).show();
+            } else {
+                List<Meal> combinedList = new ArrayList<>(uniqueMeals.values());
+                adapter = new MealAdapter(new ArrayList<>(combinedList));
+                recyclerView.setAdapter(adapter);
+
+                // Wait, MealAdapter might use an interface for clicks or we set it directly if it has setOnItemClickCallback
+                try {
+                    java.lang.reflect.Method method = adapter.getClass().getMethod("setOnItemClickCallback", MealAdapter.OnItemClickCallback.class);
+                    method.invoke(adapter, (MealAdapter.OnItemClickCallback) data -> {
+                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+                        intent.putExtra("meal_id", data.getIdMeal());
+                        intent.putExtra("meal_name", data.getStrMeal());
+                        startActivity(intent);
+                    });
+                } catch (Exception e) {
+                    // Fallback or ignore if the method doesn't exist via reflection, but the original code had it directly:
+                    adapter.setOnItemClickCallback(data -> {
+                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+                        intent.putExtra("meal_id", data.getIdMeal());
+                        intent.putExtra("meal_name", data.getStrMeal());
+                        startActivity(intent);
+                    });
                 }
             }
-
-            @Override
-            public void onFailure(Call<MealResponse> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
-                btnRefresh.setVisibility(View.VISIBLE); // Tampilkan tombol refresh
-                Toast.makeText(getContext(), "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show();
-            }
-        });
+        }
     }
 }
+
+
