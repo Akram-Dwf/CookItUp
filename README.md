@@ -2,7 +2,7 @@
 
 > **Tagline:** *"Got ingredients? Let's cook!"*
 
-CookItUp adalah aplikasi Android yang membantu pengguna menemukan resep masakan berdasarkan bahan-bahan yang sudah tersedia di dapur atau kulkas mereka. Cukup input bahan yang ada, dan CookItUp akan merekomendasikan resep yang bisa langsung dibuat — tanpa perlu beli bahan tambahan.
+CookItUp adalah aplikasi Android yang membantu pengguna menemukan resep masakan berdasarkan bahan-bahan yang sudah tersedia di dapur atau kulkas mereka. Cukup input berbagai bahan yang ada, dan CookItUp akan merekomendasikan resep yang bisa langsung dibuat — tanpa perlu beli bahan tambahan.
 
 ---
 
@@ -27,11 +27,12 @@ CookItUp adalah aplikasi Android yang membantu pengguna menemukan resep masakan 
 
 **CookItUp** adalah aplikasi Android bertema **Food & Drink** yang dibuat sebagai tugas final mata kuliah Laboratorium Mobile 2026. Aplikasi ini memungkinkan pengguna untuk:
 
-- Memasukkan bahan-bahan makanan yang tersedia di dapur/kulkas
-- Mendapatkan rekomendasi resep masakan berdasarkan bahan tersebut
-- Melihat detail resep lengkap beserta foto, bahan, dan langkah memasak
-- Menyimpan resep favorit secara lokal agar bisa diakses tanpa koneksi internet
-- Menggunakan tampilan dark mode atau light mode sesuai preferensi
+- Memasukkan banyak bahan makanan (Multi-Ingredient) yang tersedia di dapur/kulkas, yang akan ditampung sebagai komponen Chip.
+- Mendapatkan rekomendasi resep masakan gabungan berdasarkan bahan-bahan tersebut.
+- Melihat detail resep lengkap beserta foto, bahan, dan langkah memasak.
+- Menyimpan resep favorit secara lokal agar bisa diakses tanpa koneksi internet.
+- Menikmati antarmuka bertema hijau elegan (Primary: #3B6D11) yang sepenuhnya dilokalisasi ke dalam Bahasa Indonesia.
+- Menggunakan tampilan mode gelap (Dark Mode) atau mode terang yang dapat diakses langsung melalui Custom TopBar di HomeFragment.
 
 ---
 
@@ -53,14 +54,14 @@ CookItUp adalah aplikasi Android yang membantu pengguna menemukan resep masakan 
 
 | Fitur | Deskripsi |
 |---|---|
-| 🥕 Input Bahan | User menambahkan bahan yang tersedia di dapur/kulkas |
-| 🔍 Cari Resep | Sistem mencari resep berdasarkan bahan via API TheMealDB |
-| 📋 Detail Resep | Menampilkan bahan lengkap, langkah memasak, dan foto masakan |
-| ❤️ Simpan Favorit | Menyimpan resep favorit ke database lokal SQLite |
-| 📴 Mode Offline | Resep favorit tetap dapat diakses saat tidak ada koneksi internet |
-| 🔄 Tombol Refresh | Muncul otomatis saat gagal mengambil data dari API |
-| 🌙 Dark / Light Theme | Toggle tema disimpan permanen via SharedPreferences |
-| 🕓 Riwayat Bahan | Bahan terakhir yang diinput tersimpan otomatis via SharedPreferences |
+| 🥕 Multi-Ingredient Search | User dapat menginput banyak bahan sekaligus. Setiap bahan ditampung ke dalam komponen `Chip` di dalam `ChipGroup`. |
+| 🔍 Cari Resep Gabungan | Sistem melakukan *fetch* secara paralel/berurutan ke API TheMealDB untuk setiap bahan, lalu menggabungkan hasilnya tanpa duplikasi. |
+| 📋 Detail Resep | Menampilkan bahan lengkap, langkah memasak, dan foto masakan. |
+| ❤️ Simpan Favorit | Menyimpan resep favorit ke database lokal SQLite. |
+| 📴 Mode Offline | Resep favorit tetap dapat diakses saat tidak ada koneksi internet. |
+| 🔄 Tombol Refresh | Muncul otomatis saat gagal mengambil data dari API. |
+| 🌙 Dark / Light Theme | Toggle tema disimpan permanen via SharedPreferences dan telah dipindahkan ke dalam Custom TopBar di HomeFragment. |
+| 🇮🇩 Lokalisasi Penuh | Seluruh antarmuka dan teks dalam aplikasi sekarang sepenuhnya dilokalisasi ke Bahasa Indonesia. |
 
 ---
 
@@ -72,42 +73,14 @@ CookItUp adalah aplikasi Android yang membantu pengguna menemukan resep masakan 
 
 | Endpoint | Method | Fungsi |
 |---|---|---|
-| `/filter.php?i={ingredient}` | GET | Mencari resep berdasarkan satu bahan |
+| `/filter.php?i={ingredient}` | GET | Mencari resep berdasarkan bahan (dipanggil berulang untuk setiap Chip) |
 | `/lookup.php?i={mealId}` | GET | Mengambil detail resep berdasarkan ID |
-| `/random.php` | GET | Mengambil resep secara acak (fitur bonus) |
-
-**Contoh Response `/filter.php?i=chicken`:**
-```json
-{
-  "meals": [
-    {
-      "strMeal": "Chicken Handi",
-      "strMealThumb": "https://www.themealdb.com/images/media/meals/...",
-      "idMeal": "52795"
-    }
-  ]
-}
-```
-
-**Contoh Response `/lookup.php?i=52795`:**
-```json
-{
-  "meals": [
-    {
-      "idMeal": "52795",
-      "strMeal": "Chicken Handi",
-      "strInstructions": "Heat oil in a pan...",
-      "strMealThumb": "https://...",
-      "strIngredient1": "Chicken",
-      "strMeasure1": "1kg"
-    }
-  ]
-}
-```
 
 ---
 
 ## 5. Arsitektur & Struktur Teknis
+
+Aplikasi ini mengusung desain UI baru dengan tema warna **Primary Green (#3B6D11)**. Seluruh komponen teks UI dilokalisasi ke dalam **Bahasa Indonesia**.
 
 ### Activity
 
@@ -120,7 +93,7 @@ CookItUp adalah aplikasi Android yang membantu pengguna menemukan resep masakan 
 
 | Fragment | Fungsi |
 |---|---|
-| `HomeFragment` | Input bahan, tombol cari, dan menampilkan hasil resep via RecyclerView |
+| `HomeFragment` | Custom TopBar, input Multi-Ingredient (Chips), tombol cari, dan menampilkan hasil resep gabungan via RecyclerView |
 | `FavoriteFragment` | Menampilkan daftar resep yang disimpan secara lokal dari SQLite |
 
 ### Navigasi
@@ -128,125 +101,59 @@ CookItUp adalah aplikasi Android yang membantu pengguna menemukan resep masakan 
 ```
 MainActivity
 ├── BottomNavigationView
-│   ├── nav_home     → HomeFragment
-│   └── nav_favorite → FavoriteFragment
+│   ├── nav_home     → HomeFragment ("Cari Resep")
+│   └── nav_favorite → FavoriteFragment ("Favorit")
 └── FrameLayout (fragment_container)
 
 Intent: MainActivity → DetailActivity (membawa mealId)
 Bundle: HomeFragment/FavoriteFragment → MainActivity → DetailActivity
 ```
 
-### RecyclerView
+### RecyclerView (MaterialCardView)
+
+Desain resep (Item resep) pada *list* diperbarui menggunakan `MaterialCardView` bersudut *rounded* 12dp.
 
 | Lokasi | Data yang Ditampilkan | Layout Manager |
 |---|---|---|
-| `HomeFragment` | Hasil pencarian resep dari API | LinearLayoutManager |
+| `HomeFragment` | Hasil pencarian gabungan dari API | LinearLayoutManager |
 | `FavoriteFragment` | Daftar resep favorit dari SQLite | LinearLayoutManager |
 
 ---
 
 ## 6. Penjelasan Implementasi Teknis
 
-### 6.1 Activity & Intent
+### 6.1 Networking & Logika Multi-Ingredient (Retrofit)
 
-Aplikasi memiliki dua Activity:
+Sesuai materi Bab 6, Retrofit digunakan untuk mengambil data resep dari TheMealDB API. 
+Pada pembaruan terbaru, pencarian resep sekarang mendukung banyak bahan sekaligus (**Multi-Ingredient Search**). Ketika user mengklik "Cari Resep", aplikasi akan melakukan *fetch* API TheMealDB (`/filter.php?i=`) untuk **setiap chip bahan** secara berurutan/paralel.
 
-- **MainActivity** sebagai Launcher yang memuat BottomNavigationView dan Fragment
-- **DetailActivity** yang menerima data `mealId` dari Intent untuk menampilkan detail resep
+Untuk mencegah duplikasi resep yang muncul di lebih dari satu bahan, hasil respons dari berbagai bahan digabungkan ke dalam koleksi `LinkedHashMap<String, Meal>` (menggunakan `idMeal` sebagai key yang unik).
 
+**Penerapan Fetch Gabungan:**
 ```java
-// Pindah dari HomeFragment ke DetailActivity via MainActivity
-Intent intent = new Intent(getActivity(), DetailActivity.class);
-intent.putExtra("meal_id", meal.getIdMeal());
-intent.putExtra("meal_name", meal.getStrMeal());
-startActivity(intent);
-```
-
----
-
-### 6.2 Fragment & BottomNavigationView
-
-Sesuai materi Bab 4, navigasi antar Fragment menggunakan `BottomNavigationView` dan `FrameLayout` di `activity_main.xml`. Data dikirim antar Fragment menggunakan `Bundle`.
-
-**activity_main.xml:**
-```xml
-<LinearLayout ...>
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_weight="1"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"/>
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:menu="@menu/bottom_nav_menu"/>
-</LinearLayout>
-```
-
-**MainActivity.java — logika navigasi:**
-```java
-bottomNav.setOnItemSelectedListener(item -> {
-    Fragment selectedFragment = null;
-    int id = item.getItemId();
-    if (id == R.id.nav_home) {
-        selectedFragment = new HomeFragment();
-    } else if (id == R.id.nav_favorite) {
-        selectedFragment = new FavoriteFragment();
-    }
-    return loadFragment(selectedFragment);
-});
-```
-
----
-
-### 6.3 RecyclerView
-
-Sesuai materi Bab 3, RecyclerView digunakan di dua tempat:
-
-**Komponen yang dibuat:**
-
-| File | Fungsi |
-|---|---|
-| `MealAdapter.java` | Adapter untuk hasil pencarian dari API |
-| `FavoriteAdapter.java` | Adapter untuk data favorit dari SQLite |
-| `item_meal.xml` | Layout item untuk setiap resep di list |
-
-**Struktur MealAdapter:**
-```java
-public class MealAdapter extends RecyclerView.Adapter<MealAdapter.ViewHolder> {
-
-    private ArrayList<Meal> meals;
-
-    public MealAdapter(ArrayList<Meal> meals) {
-        this.meals = meals;
-    }
-
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.item_meal, parent, false);
-        return new ViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Meal meal = meals.get(position);
-        holder.tvName.setText(meal.getStrMeal());
-        Picasso.get().load(meal.getStrMealThumb()).into(holder.ivThumbnail);
-    }
-
-    @Override
-    public int getItemCount() { return meals.size(); }
+HashMap<String, Meal> uniqueMeals = new HashMap<>();
+// Iterasi setiap bahan yang ada di dalam ArrayList (dari ChipGroup)
+for (String ingredient : ingredients) {
+    Call<MealResponse> call = apiService.getMealsByIngredient(ingredient);
+    call.enqueue(new Callback<MealResponse>() {
+        @Override
+        public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
+            // Jika sukses, masukkan ke uniqueMeals menggunakan idMeal sebagai key
+            uniqueMeals.put(meal.getIdMeal(), meal);
+            // Lakukan pengecekan apakah semua fetch bahan sudah selesai
+        }
+        // ...
+    });
 }
 ```
 
----
+### 6.2 Fragment & BottomNavigationView
 
-### 6.4 Background Thread — Executor & Handler
+Sesuai materi Bab 4, navigasi antar Fragment menggunakan `BottomNavigationView` dan `FrameLayout`. Data dikirim antar Fragment menggunakan `Bundle`.
 
-Sesuai materi Bab 5, semua operasi berat (query SQLite, fetch API) dijalankan di background thread menggunakan `Executor`, kemudian hasilnya dikembalikan ke Main Thread via `Handler` untuk update UI.
+### 6.3 Background Thread — Executor & Handler
+
+Sesuai materi Bab 5, semua operasi berat (seperti query SQLite) dijalankan di background thread menggunakan `Executor`, kemudian hasilnya dikembalikan ke Main Thread via `Handler` untuk update UI.
 
 **Pola yang digunakan (dari modul SQLite):**
 ```java
@@ -254,108 +161,21 @@ ExecutorService executor = Executors.newSingleThreadExecutor();
 Handler handler = new Handler(Looper.getMainLooper());
 
 executor.execute(() -> {
-    // Berjalan di background thread
+    // Berjalan di background thread (Contoh: load favorit)
     MealHelper mealHelper = MealHelper.getInstance(getContext());
     mealHelper.open();
-    ArrayList<Meal> favorites = MappingHelper.mapCursorToArrayList(
-        mealHelper.queryAll()
-    );
+    ArrayList<Meal> favorites = MappingHelper.mapCursorToArrayList(mealHelper.queryAll());
 
     handler.post(() -> {
         // Kembali ke Main Thread untuk update UI
         adapter.setData(favorites);
-        if (favorites.size() == 0) {
-            tvEmpty.setVisibility(View.VISIBLE);
-        }
     });
 });
 ```
 
----
+### 6.4 SQLite — Penyimpanan Resep Favorit (Local Data Persistent)
 
-### 6.5 Networking — Retrofit
-
-Sesuai materi Bab 6, Retrofit digunakan untuk mengambil data resep dari TheMealDB API.
-
-**RetrofitClient.java:**
-```java
-public class RetrofitClient {
-    private static final String BASE_URL = "https://www.themealdb.com/api/json/v1/1/";
-    private static Retrofit retrofit = null;
-
-    public static Retrofit getClient() {
-        if (retrofit == null) {
-            retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        }
-        return retrofit;
-    }
-}
-```
-
-**ApiService.java:**
-```java
-public interface ApiService {
-    @GET("filter.php")
-    Call<MealResponse> getMealsByIngredient(@Query("i") String ingredient);
-
-    @GET("lookup.php")
-    Call<MealDetailResponse> getMealDetail(@Query("i") String mealId);
-
-    @GET("random.php")
-    Call<MealDetailResponse> getRandomMeal();
-}
-```
-
-**Penggunaan di HomeFragment dengan error handling & tombol refresh:**
-```java
-private void searchMeals(String ingredient) {
-    progressBar.setVisibility(View.VISIBLE);
-    btnRefresh.setVisibility(View.GONE);
-
-    ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
-    Call<MealResponse> call = apiService.getMealsByIngredient(ingredient);
-
-    call.enqueue(new Callback<MealResponse>() {
-        @Override
-        public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
-            progressBar.setVisibility(View.GONE);
-            if (response.isSuccessful() && response.body() != null) {
-                List<Meal> meals = response.body().getMeals();
-                adapter = new MealAdapter(new ArrayList<>(meals));
-                recyclerView.setAdapter(adapter);
-            }
-        }
-
-        @Override
-        public void onFailure(Call<MealResponse> call, Throwable t) {
-            progressBar.setVisibility(View.GONE);
-            btnRefresh.setVisibility(View.VISIBLE); // Tampilkan tombol refresh
-            Toast.makeText(getContext(), "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show();
-        }
-    });
-}
-```
-
----
-
-### 6.6 SQLite — Penyimpanan Resep Favorit
-
-Sesuai materi Bab 8, SQLite digunakan untuk menyimpan resep favorit secara lokal.
-
-**Struktur Tabel `favorite_meal`:**
-
-| Kolom | Tipe | Keterangan |
-|---|---|---|
-| `_id` | INTEGER PRIMARY KEY AUTOINCREMENT | ID otomatis |
-| `meal_id` | TEXT NOT NULL | ID resep dari API |
-| `meal_name` | TEXT NOT NULL | Nama resep |
-| `thumbnail` | TEXT NOT NULL | URL foto resep |
-| `instructions` | TEXT | Langkah memasak |
-
-**File-file yang dibuat:**
+Sesuai materi Bab 8, SQLite digunakan untuk menyimpan resep favorit secara lokal agar dapat diakses tanpa koneksi internet.
 
 | File | Fungsi |
 |---|---|
@@ -364,78 +184,11 @@ Sesuai materi Bab 8, SQLite digunakan untuk menyimpan resep favorit secara lokal
 | `MealHelper.java` | getInstance, open, close, insert, queryAll, deleteById |
 | `MappingHelper.java` | Mengkonversi Cursor menjadi ArrayList\<Meal\> |
 
-**DatabaseContract.java:**
-```java
-public class DatabaseContract {
-    public static final String TABLE_NAME = "favorite_meal";
+### 6.5 SharedPreferences — Tema & Riwayat Bahan
 
-    public static final class MealColumns implements BaseColumns {
-        public static final String MEAL_ID = "meal_id";
-        public static final String MEAL_NAME = "meal_name";
-        public static final String THUMBNAIL = "thumbnail";
-        public static final String INSTRUCTIONS = "instructions";
-    }
-}
-```
-
-**Menyimpan favorit (di DetailActivity):**
-```java
-btnFavorite.setOnClickListener(v -> {
-    ExecutorService executor = Executors.newSingleThreadExecutor();
-    Handler handler = new Handler(Looper.getMainLooper());
-
-    executor.execute(() -> {
-        ContentValues values = new ContentValues();
-        values.put(DatabaseContract.MealColumns.MEAL_ID, mealDetail.getIdMeal());
-        values.put(DatabaseContract.MealColumns.MEAL_NAME, mealDetail.getStrMeal());
-        values.put(DatabaseContract.MealColumns.THUMBNAIL, mealDetail.getStrMealThumb());
-        values.put(DatabaseContract.MealColumns.INSTRUCTIONS, mealDetail.getStrInstructions());
-
-        long result = mealHelper.insert(values);
-
-        handler.post(() -> {
-            if (result > 0) {
-                Toast.makeText(DetailActivity.this, "Resep disimpan!", Toast.LENGTH_SHORT).show();
-            }
-        });
-    });
-});
-```
-
----
-
-### 6.7 SharedPreferences — Tema & Riwayat Bahan
-
-Sesuai materi Bab 7, SharedPreferences digunakan untuk dua hal:
-
-**a. Menyimpan preferensi tema (dark/light mode):**
-```java
-// Menyimpan
-SharedPreferences.Editor editor = sharedPreferences.edit();
-editor.putBoolean("dark_mode", isChecked);
-editor.apply();
-
-// Membaca dan menerapkan saat app dibuka
-boolean isDarkMode = sharedPreferences.getBoolean("dark_mode", false);
-if (isDarkMode) {
-    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-} else {
-    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-}
-```
-
-**b. Menyimpan riwayat bahan terakhir:**
-```java
-// Menyimpan bahan terakhir setelah user klik "Find Recipes"
-editor.putString("last_ingredients", etIngredient.getText().toString());
-editor.apply();
-
-// Memuat bahan terakhir saat HomeFragment dibuka
-String lastIngredient = sharedPreferences.getString("last_ingredients", "");
-if (!lastIngredient.isEmpty()) {
-    etIngredient.setText(lastIngredient);
-}
-```
+Sesuai materi Bab 7, SharedPreferences digunakan untuk menyimpan preferensi pengguna:
+1. **Preferensi Tema (Dark/Light Mode)**: Disetel melalui Switch berbasis SharedPreferences yang telah dipindahkan ke dalam Custom TopBar di `HomeFragment`.
+2. **Riwayat Bahan**: Menyimpan bahan terakhir yang diinput otomatis.
 
 ---
 
@@ -448,16 +201,16 @@ CookItUp/
 │
 ├── java/com.example.cookitup/
 │   ├── ui/
-│   │   ├── MainActivity.java          ← Launcher, BottomNav, loadFragment()
-│   │   ├── DetailActivity.java        ← Detail resep + tombol favorit
+│   │   ├── MainActivity.java          ← Launcher, BottomNav
+│   │   ├── DetailActivity.java        ← Detail resep + favorit
 │   │   ├── home/
-│   │   │   └── HomeFragment.java      ← Input bahan, fetch API, RecyclerView
+│   │   │   └── HomeFragment.java      ← Multi-Ingredient Chips, fetch gabungan
 │   │   └── favorite/
-│   │       └── FavoriteFragment.java  ← Load SQLite, RecyclerView favorit
+│   │       └── FavoriteFragment.java  ← Load SQLite, offline mode
 │   │
 │   ├── adapter/
-│   │   ├── MealAdapter.java           ← Adapter hasil pencarian API
-│   │   └── FavoriteAdapter.java       ← Adapter data favorit SQLite
+│   │   ├── MealAdapter.java           ← Adapter list resep
+│   │   └── FavoriteAdapter.java       ← Adapter data SQLite
 │   │
 │   ├── network/
 │   │   ├── RetrofitClient.java        ← Konfigurasi Retrofit + BASE_URL
@@ -479,12 +232,14 @@ CookItUp/
     ├── layout/
     │   ├── activity_main.xml          ← FrameLayout + BottomNavigationView
     │   ├── activity_detail.xml        ← Detail resep UI
-    │   ├── fragment_home.xml          ← Input bahan + RecyclerView
+    │   ├── fragment_home.xml          ← Custom TopBar, Multi-Ingredient + Chips
     │   ├── fragment_favorite.xml      ← RecyclerView favorit
-    │   └── item_meal.xml              ← Layout per item resep
+    │   └── item_meal.xml              ← MaterialCardView 12dp rounded per item
     ├── menu/
     │   └── bottom_nav_menu.xml        ← Item menu bottom navigation
     └── values/
+        ├── colors.xml                 ← Primary Green Theme (#3B6D11)
+        ├── strings.xml                ← Terjemahan Bahasa Indonesia
         ├── themes.xml                 ← Light theme
         └── themes.xml (night)         ← Dark theme
 ```
@@ -502,12 +257,13 @@ CookItUp/
                          ▼
 ┌─────────────────────────────────────────────────────────┐
 │                   HomeFragment                          │
-│  1. User input bahan (misal: "chicken, garlic")         │
-│  2. Klik tombol "Find Recipes"                          │
-│  3. Bahan disimpan ke SharedPreferences                 │
-│  4. Retrofit fetch TheMealDB API (background thread)    │
-│  5. Hasil ditampilkan di RecyclerView                   │
-│  6. Jika gagal → tampilkan tombol Refresh               │
+│  1. User input bahan dan klik tombol '+'                │
+│  2. Bahan ditambahkan sebagai Chip ke dalam ChipGroup   │
+│  3. Klik tombol "Cari Resep"                            │
+│  4. Retrofit fetch API TheMealDB paralel tiap chip      │
+│  5. Hasil digabungkan di LinkedHashMap (tanpa duplikat) │
+│  6. Ditampilkan di RecyclerView (CardView 12dp rounded) │
+│  7. Jika gagal → tampilkan tombol Refresh               │
 └────────────────────────┬────────────────────────────────┘
                          │ klik item resep
                          ▼
@@ -515,8 +271,8 @@ CookItUp/
 │                  DetailActivity                         │
 │  1. Retrofit fetch detail resep by ID                   │
 │  2. Tampilkan foto, bahan, langkah memasak              │
-│  3. Klik ❤️ → Executor simpan ke SQLite (background)   │
-│  4. Toast konfirmasi "Resep disimpan!"                  │
+│  3. Klik "Simpan ke Favorit" → Executor ke SQLite       │
+│  4. Toast konfirmasi Bahasa Indonesia                   │
 └─────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────┐
@@ -529,7 +285,7 @@ CookItUp/
 
 ┌─────────────────────────────────────────────────────────┐
 │               Settings (di HomeFragment)                │
-│  1. Switch dark/light mode                              │
+│  1. Switch dark/light mode di Custom TopBar             │
 │  2. Status disimpan ke SharedPreferences                │
 │  3. Tema langsung berubah via AppCompatDelegate         │
 └─────────────────────────────────────────────────────────┘
@@ -541,11 +297,11 @@ CookItUp/
 
 | Kriteria | Bobot | Pemenuhan |
 |---|---|---|
-| **Fungsi & Kegunaan** | 40% | Pencarian resep by bahan berfungsi penuh, mode offline via SQLite, tombol refresh saat gagal koneksi |
-| **Kreativitas & Inovasi** | 10% | Konsep "masak dari bahan yang ada" unik dan problem-solving, riwayat bahan tersimpan otomatis |
-| **User Interface** | 20% | Dark/light theme, card design di RecyclerView, layout bersih menggunakan Material Design |
-| **Stabilitas & Performa** | 20% | Semua operasi berat di background thread, error handling lengkap, tidak ada operasi di main thread |
-| **Dokumentasi** | 10% | README.md lengkap di GitHub dengan deskripsi, cara penggunaan, dan penjelasan teknis |
+| **Fungsi & Kegunaan** | 40% | Multi-ingredient search dengan Chip, mode offline via SQLite, tombol refresh saat gagal koneksi |
+| **Kreativitas & Inovasi** | 10% | Solusi masak dari bahan yang ada, penggabungan hasil array API tanpa duplikat (HashMap). |
+| **User Interface** | 20% | Tema warna hijau estetik, MaterialCardView 12dp, lokalisasi Bahasa Indonesia, Custom TopBar Material Design. |
+| **Stabilitas & Performa** | 20% | Semua operasi berat di background thread (Executor), error handling lengkap, fetch paralel asinkron yang terkelola dengan baik. |
+| **Dokumentasi** | 10% | README.md lengkap di GitHub mencakup seluruh fitur baru dan spesifikasi teknis arsitektur. |
 
 ### Checklist Spesifikasi Teknis
 
@@ -574,7 +330,7 @@ CookItUp/
 | Komponen | Teknologi | Versi |
 |---|---|---|
 | Language | Java | - |
-| UI | XML Layout + Material Design | - |
+| UI | XML Layout + Material Design (Chip, CardView) | - |
 | Networking | Retrofit2 + Gson Converter | 2.9.0 |
 | HTTP Client | OkHttp3 | 4.9.1 |
 | Image Loading | Picasso | 2.71828 |
@@ -633,7 +389,7 @@ dependencies {
     // Picasso untuk loading gambar dari URL
     implementation("com.squareup.picasso:picasso:2.71828")
 
-    // Material Design (BottomNavigationView, CardView, dll)
+    // Material Design (BottomNavigationView, MaterialCardView, Chip, dll)
     implementation("com.google.android.material:material:1.9.0")
 }
 ```
