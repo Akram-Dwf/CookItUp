@@ -16,8 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -50,8 +50,8 @@ public class HomeFragment extends Fragment {
     private MealAdapter adapter;
     private ImageView btnThemeToggle;
     private SharedPreferences sharedPreferences;
-
-    private ArrayList<String> ingredients = new ArrayList<>();
+    
+    private HomeViewModel viewModel;
 
     @Nullable
     @Override
@@ -73,6 +73,9 @@ public class HomeFragment extends Fragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         sharedPreferences = requireActivity().getSharedPreferences("cookitup_prefs", Context.MODE_PRIVATE);
+        
+        // Use activity scope so ViewModel survives fragment replacement and dark mode toggle!
+        viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
 
         btnThemeToggle = view.findViewById(R.id.btn_theme_toggle);
         btnThemeToggle.setOnClickListener(v -> {
@@ -89,11 +92,16 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        // Restore chips from ViewModel
+        for (String ing : viewModel.ingredients) {
+            addChip(ing);
+        }
+
         btnAddIngredient.setOnClickListener(v -> {
-            String ingredient = etIngredient.getText().toString().trim();
+            String ingredient = etIngredient.getText().toString().trim().toLowerCase();
             if (!ingredient.isEmpty()) {
-                if (!ingredients.contains(ingredient)) {
-                    ingredients.add(ingredient);
+                if (!viewModel.ingredients.contains(ingredient)) {
+                    viewModel.ingredients.add(ingredient);
                     addChip(ingredient);
                 }
                 etIngredient.setText("");
@@ -101,7 +109,9 @@ public class HomeFragment extends Fragment {
         });
 
         btnSearch.setOnClickListener(v -> {
-            if (ingredients.isEmpty()) {
+            if (viewModel.ingredients.isEmpty()) {
+                // If user clears ingredients and clicks search, clear results
+                viewModel.searchResults.setValue(new ArrayList<>());
                 Toast.makeText(getContext(), getString(R.string.hint_ingredient), Toast.LENGTH_SHORT).show();
             } else {
                 searchMeals();
@@ -109,8 +119,34 @@ public class HomeFragment extends Fragment {
         });
 
         btnRefresh.setOnClickListener(v -> {
-            if (!ingredients.isEmpty()) {
+            if (!viewModel.ingredients.isEmpty()) {
                 searchMeals();
+            }
+        });
+
+        // Observe ViewModel data
+        viewModel.isSearching.observe(getViewLifecycleOwner(), isSearching -> {
+            if (isSearching) {
+                progressBar.setVisibility(View.VISIBLE);
+                btnRefresh.setVisibility(View.GONE);
+            } else {
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+        viewModel.searchResults.observe(getViewLifecycleOwner(), meals -> {
+            if (meals != null) {
+                adapter = new MealAdapter(new ArrayList<>(meals));
+                recyclerView.setAdapter(adapter);
+
+                adapter.setOnItemClickCallback(data -> {
+                    if (getActivity() != null) {
+                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+                        intent.putExtra("meal_id", data.getIdMeal());
+                        intent.putExtra("meal_name", data.getStrMeal());
+                        startActivity(intent);
+                    }
+                });
             }
         });
     }
@@ -123,22 +159,26 @@ public class HomeFragment extends Fragment {
         chip.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.on_secondary_container));
         chip.setOnCloseIconClickListener(v -> {
             chipGroupIngredients.removeView(chip);
-            ingredients.remove(ingredient);
+            viewModel.ingredients.remove(ingredient);
+            if (viewModel.ingredients.isEmpty()) {
+                // Clear search if no ingredients left
+                viewModel.searchResults.setValue(new ArrayList<>());
+            }
         });
         chipGroupIngredients.addView(chip);
     }
 
     private void searchMeals() {
-        progressBar.setVisibility(View.VISIBLE);
-        btnRefresh.setVisibility(View.GONE);
+        viewModel.isSearching.setValue(true);
         recyclerView.setAdapter(null);
 
         ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
         HashMap<String, Meal> uniqueMeals = new HashMap<>();
+        HashMap<String, Integer> mealOccurrences = new HashMap<>();
         final int[] completedCalls = {0};
         final boolean[] hasError = {false};
 
-        for (String ingredient : ingredients) {
+        for (String ingredient : viewModel.ingredients) {
             Call<MealResponse> call = apiService.getMealsByIngredient(ingredient);
             call.enqueue(new Callback<MealResponse>() {
                 @Override
@@ -149,44 +189,44 @@ public class HomeFragment extends Fragment {
                         if (meals != null) {
                             for (Meal meal : meals) {
                                 uniqueMeals.put(meal.getIdMeal(), meal);
+                                mealOccurrences.put(meal.getIdMeal(), mealOccurrences.getOrDefault(meal.getIdMeal(), 0) + 1);
                             }
                         }
                     }
-                    checkCompletion(completedCalls[0], hasError[0], uniqueMeals);
+                    checkCompletion(completedCalls[0], hasError[0], uniqueMeals, mealOccurrences);
                 }
 
                 @Override
                 public void onFailure(Call<MealResponse> call, Throwable t) {
                     completedCalls[0]++;
                     hasError[0] = true;
-                    checkCompletion(completedCalls[0], hasError[0], uniqueMeals);
+                    checkCompletion(completedCalls[0], hasError[0], uniqueMeals, mealOccurrences);
                 }
             });
         }
     }
 
-    private void checkCompletion(int completedCount, boolean hasError, HashMap<String, Meal> uniqueMeals) {
-        if (completedCount == ingredients.size()) {
-            progressBar.setVisibility(View.GONE);
-            if (hasError && uniqueMeals.isEmpty()) {
+    private void checkCompletion(int completedCount, boolean hasError, HashMap<String, Meal> uniqueMeals, HashMap<String, Integer> mealOccurrences) {
+        if (completedCount == viewModel.ingredients.size()) {
+            viewModel.isSearching.setValue(false);
+            
+            List<Meal> intersectionList = new ArrayList<>();
+            // Only add meals that appeared in ALL ingredient API responses
+            for (String id : uniqueMeals.keySet()) {
+                if (mealOccurrences.get(id) == viewModel.ingredients.size()) {
+                    intersectionList.add(uniqueMeals.get(id));
+                }
+            }
+
+            if (hasError && intersectionList.isEmpty()) {
                 btnRefresh.setVisibility(View.VISIBLE);
                 Toast.makeText(getContext(), getString(R.string.msg_no_internet), Toast.LENGTH_SHORT).show();
-            } else if (uniqueMeals.isEmpty()) {
+            } else if (intersectionList.isEmpty()) {
                 Toast.makeText(getContext(), getString(R.string.msg_no_data), Toast.LENGTH_SHORT).show();
-            } else {
-                List<Meal> combinedList = new ArrayList<>(uniqueMeals.values());
-                adapter = new MealAdapter(new ArrayList<>(combinedList));
-                recyclerView.setAdapter(adapter);
-
-                adapter.setOnItemClickCallback(data -> {
-                    if (getActivity() != null) {
-                        Intent intent = new Intent(getActivity(), DetailActivity.class);
-                        intent.putExtra("meal_id", data.getIdMeal());
-                        intent.putExtra("meal_name", data.getStrMeal());
-                        startActivity(intent);
-                    }
-                });
             }
+            
+            // Save results to ViewModel so it persists
+            viewModel.searchResults.setValue(intersectionList);
         }
     }
 }

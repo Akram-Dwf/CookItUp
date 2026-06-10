@@ -43,7 +43,7 @@
             android:id="@+id/btn_theme_toggle"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:src="@drawable/ic_menu_month"
+            android:src="@drawable/ic_dark_mode"
             app:tint="@color/white"
             android:padding="6dp"
             android:background="?attr/selectableItemBackgroundBorderless"

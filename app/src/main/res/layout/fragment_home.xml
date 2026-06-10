@@ -43,7 +43,7 @@
             android:id="@+id/btn_theme_toggle"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:src="@drawable/ic_menu_month"
+            android:src="@drawable/ic_dark_mode"
             app:tint="@color/primary"
             android:padding="6dp"
             android:background="?attr/selectableItemBackgroundBorderless"
@@ -51,7 +51,7 @@
             android:focusable="true"/>
     </LinearLayout>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -159,9 +159,9 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:nestedScrollingEnabled="false"/>
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>
