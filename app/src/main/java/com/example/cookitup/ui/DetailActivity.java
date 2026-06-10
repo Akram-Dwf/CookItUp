@@ -1,6 +1,7 @@
 package com.example.cookitup.ui;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -36,6 +37,7 @@ public class DetailActivity extends AppCompatActivity {
     private Button btnFavorite;
     private MealHelper mealHelper;
     private MealDetail currentMealDetail;
+    private boolean isFavorite = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +66,7 @@ public class DetailActivity extends AppCompatActivity {
 
         btnFavorite.setOnClickListener(v -> {
             if (currentMealDetail != null) {
-                saveToFavorite(currentMealDetail);
+                toggleFavorite(currentMealDetail);
             }
         });
     }
@@ -80,6 +82,7 @@ public class DetailActivity extends AppCompatActivity {
                     tvInstructions.setText(currentMealDetail.getStrInstructions());
                     Picasso.get().load(currentMealDetail.getStrMealThumb()).into(ivThumbnail);
                     populateIngredients(currentMealDetail);
+                    checkIfFavorite(currentMealDetail.getIdMeal());
                 }
             }
 
@@ -90,28 +93,73 @@ public class DetailActivity extends AppCompatActivity {
         });
     }
 
-    private void saveToFavorite(MealDetail mealDetail) {
+    private void checkIfFavorite(String mealId) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
         executor.execute(() -> {
             mealHelper.open();
-            ContentValues values = new ContentValues();
-            values.put(DatabaseContract.MealColumns.MEAL_ID, mealDetail.getIdMeal());
-            values.put(DatabaseContract.MealColumns.MEAL_NAME, mealDetail.getStrMeal());
-            values.put(DatabaseContract.MealColumns.THUMBNAIL, mealDetail.getStrMealThumb());
-            values.put(DatabaseContract.MealColumns.INSTRUCTIONS, mealDetail.getStrInstructions());
-
-            long result = mealHelper.insert(values);
+            Cursor cursor = mealHelper.queryById(mealId);
+            boolean exists = (cursor != null && cursor.getCount() > 0);
+            if (cursor != null) cursor.close();
             mealHelper.close();
 
             handler.post(() -> {
-                if (result > 0) {
-                    Toast.makeText(DetailActivity.this, "Resep disimpan!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(DetailActivity.this, "Gagal menyimpan resep", Toast.LENGTH_SHORT).show();
-                }
+                isFavorite = exists;
+                updateFavoriteButtonUI();
             });
+        });
+    }
+
+    private void updateFavoriteButtonUI() {
+        if (isFavorite) {
+            btnFavorite.setText("HAPUS DARI FAVORIT");
+            // Change color to error container for delete
+            ((com.google.android.material.button.MaterialButton) btnFavorite)
+                    .setBackgroundTintList(android.content.res.ColorStateList.valueOf(getResources().getColor(R.color.error)));
+        } else {
+            btnFavorite.setText("SIMPAN KE FAVORIT");
+            ((com.google.android.material.button.MaterialButton) btnFavorite)
+                    .setBackgroundTintList(android.content.res.ColorStateList.valueOf(getResources().getColor(R.color.primary)));
+        }
+    }
+
+    private void toggleFavorite(MealDetail mealDetail) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            mealHelper.open();
+            if (isFavorite) {
+                long result = mealHelper.deleteById(mealDetail.getIdMeal());
+                mealHelper.close();
+                handler.post(() -> {
+                    if (result > 0) {
+                        isFavorite = false;
+                        updateFavoriteButtonUI();
+                        Toast.makeText(DetailActivity.this, "Resep dihapus dari favorit!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                ContentValues values = new ContentValues();
+                values.put(DatabaseContract.MealColumns.MEAL_ID, mealDetail.getIdMeal());
+                values.put(DatabaseContract.MealColumns.MEAL_NAME, mealDetail.getStrMeal());
+                values.put(DatabaseContract.MealColumns.THUMBNAIL, mealDetail.getStrMealThumb());
+                values.put(DatabaseContract.MealColumns.INSTRUCTIONS, mealDetail.getStrInstructions());
+
+                long result = mealHelper.insert(values);
+                mealHelper.close();
+
+                handler.post(() -> {
+                    if (result > 0) {
+                        isFavorite = true;
+                        updateFavoriteButtonUI();
+                        Toast.makeText(DetailActivity.this, "Resep disimpan!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(DetailActivity.this, "Gagal menyimpan resep", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         });
     }
 

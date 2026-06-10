@@ -6,7 +6,7 @@
     <string name="txt_instructions">Cara Memasak</string>
     <string name="nav_home">Cari Resep</string>
     <string name="nav_favorite">Favorit</string>
-    <string name="msg_no_data">Tidak ada data</string>
+    <string name="msg_no_data">Tidak ditemukan. Harap input bahan dalam Bahasa Inggris (cth: chicken, garlic)</string>
     <string name="msg_no_internet">Tidak ada koneksi internet</string>
     <string name="txt_dark_mode">Mode Gelap</string>
     <string name="txt_subtitle">Masak dari bahan yang ada di dapur</string>
