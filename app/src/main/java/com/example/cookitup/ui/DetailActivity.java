@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +32,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private ImageView ivThumbnail;
     private TextView tvName, tvInstructions;
+    private LinearLayout layoutIngredients;
     private Button btnFavorite;
     private MealHelper mealHelper;
     private MealDetail currentMealDetail;
@@ -43,6 +45,7 @@ public class DetailActivity extends AppCompatActivity {
         ivThumbnail = findViewById(R.id.iv_thumbnail);
         tvName = findViewById(R.id.tv_name);
         tvInstructions = findViewById(R.id.tv_instructions);
+        layoutIngredients = findViewById(R.id.layout_ingredients);
         btnFavorite = findViewById(R.id.btn_favorite);
 
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
@@ -76,6 +79,7 @@ public class DetailActivity extends AppCompatActivity {
                     tvName.setText(currentMealDetail.getStrMeal());
                     tvInstructions.setText(currentMealDetail.getStrInstructions());
                     Picasso.get().load(currentMealDetail.getStrMealThumb()).into(ivThumbnail);
+                    populateIngredients(currentMealDetail);
                 }
             }
 
@@ -109,5 +113,45 @@ public class DetailActivity extends AppCompatActivity {
                 }
             });
         });
+    }
+
+    private void populateIngredients(MealDetail mealDetail) {
+        layoutIngredients.removeAllViews();
+        String[][] ingredients = {
+                {mealDetail.getStrIngredient1(), mealDetail.getStrMeasure1()},
+                {mealDetail.getStrIngredient2(), mealDetail.getStrMeasure2()},
+                {mealDetail.getStrIngredient3(), mealDetail.getStrMeasure3()},
+                {mealDetail.getStrIngredient4(), mealDetail.getStrMeasure4()},
+                {mealDetail.getStrIngredient5(), mealDetail.getStrMeasure5()},
+                {mealDetail.getStrIngredient6(), mealDetail.getStrMeasure6()},
+                {mealDetail.getStrIngredient7(), mealDetail.getStrMeasure7()},
+                {mealDetail.getStrIngredient8(), mealDetail.getStrMeasure8()},
+                {mealDetail.getStrIngredient9(), mealDetail.getStrMeasure9()},
+                {mealDetail.getStrIngredient10(), mealDetail.getStrMeasure10()},
+                {mealDetail.getStrIngredient11(), mealDetail.getStrMeasure11()},
+                {mealDetail.getStrIngredient12(), mealDetail.getStrMeasure12()},
+                {mealDetail.getStrIngredient13(), mealDetail.getStrMeasure13()},
+                {mealDetail.getStrIngredient14(), mealDetail.getStrMeasure14()},
+                {mealDetail.getStrIngredient15(), mealDetail.getStrMeasure15()},
+                {mealDetail.getStrIngredient16(), mealDetail.getStrMeasure16()},
+                {mealDetail.getStrIngredient17(), mealDetail.getStrMeasure17()},
+                {mealDetail.getStrIngredient18(), mealDetail.getStrMeasure18()},
+                {mealDetail.getStrIngredient19(), mealDetail.getStrMeasure19()},
+                {mealDetail.getStrIngredient20(), mealDetail.getStrMeasure20()}
+        };
+
+        for (String[] item : ingredients) {
+            String ing = item[0];
+            String meas = item[1];
+            if (ing != null && !ing.trim().isEmpty()) {
+                TextView tv = new TextView(this);
+                String measureText = (meas != null && !meas.trim().isEmpty()) ? meas.trim() + " - " : "";
+                tv.setText("• " + measureText + ing.trim());
+                tv.setTextColor(getResources().getColor(R.color.on_surface));
+                tv.setTextSize(16);
+                tv.setPadding(0, 0, 0, 16);
+                layoutIngredients.addView(tv);
+            }
+        }
     }
 }
