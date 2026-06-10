@@ -9,8 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -42,12 +42,13 @@ import retrofit2.Response;
 public class HomeFragment extends Fragment {
 
     private EditText etIngredient;
-    private Button btnAddIngredient, btnSearch, btnRefresh;
+    private android.widget.ImageButton btnAddIngredient;
+    private Button btnSearch, btnRefresh;
     private ChipGroup chipGroupIngredients;
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
     private MealAdapter adapter;
-    private Switch switchTheme;
+    private ImageView btnThemeToggle;
     private SharedPreferences sharedPreferences;
 
     private ArrayList<String> ingredients = new ArrayList<>();
@@ -63,27 +64,25 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         etIngredient = view.findViewById(R.id.et_ingredient);
-        btnAddIngredient = view.findViewById(R.id.btn_add_ingredient);
+        btnAddIngredient = view.findViewById(R.id.btn_add_chip);
         chipGroupIngredients = view.findViewById(R.id.chip_group_ingredients);
         btnSearch = view.findViewById(R.id.btn_search);
         btnRefresh = view.findViewById(R.id.btn_refresh);
         progressBar = view.findViewById(R.id.progress_bar);
         recyclerView = view.findViewById(R.id.recycler_view);
-        switchTheme = view.findViewById(R.id.switch_theme);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
         sharedPreferences = requireActivity().getSharedPreferences("cookitup_prefs", Context.MODE_PRIVATE);
 
-        // Load theme preference
-        boolean isDarkMode = sharedPreferences.getBoolean("dark_mode", false);
-        switchTheme.setChecked(isDarkMode);
-        switchTheme.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        btnThemeToggle = view.findViewById(R.id.btn_theme_toggle);
+        btnThemeToggle.setOnClickListener(v -> {
+            boolean currentMode = sharedPreferences.getBoolean("dark_mode", false);
+            boolean newMode = !currentMode;
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("dark_mode", isChecked);
+            editor.putBoolean("dark_mode", newMode);
             editor.apply();
 
-            if (isChecked) {
+            if (newMode) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);

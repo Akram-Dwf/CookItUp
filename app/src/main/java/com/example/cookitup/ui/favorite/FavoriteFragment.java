@@ -58,6 +58,22 @@ public class FavoriteFragment extends Fragment {
         });
 
         mealHelper = MealHelper.getInstance(getContext());
+
+        android.widget.ImageView btnThemeToggle = view.findViewById(R.id.btn_theme_toggle);
+        android.content.SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("cookitup_prefs", android.content.Context.MODE_PRIVATE);
+        btnThemeToggle.setOnClickListener(v -> {
+            boolean currentMode = sharedPreferences.getBoolean("dark_mode", false);
+            boolean newMode = !currentMode;
+            android.content.SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("dark_mode", newMode);
+            editor.apply();
+
+            if (newMode) {
+                androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES);
+            } else {
+                androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO);
+            }
+        });
     }
 
     @Override

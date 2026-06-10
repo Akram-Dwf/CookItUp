@@ -5,5 +5,5 @@
     <color name="primary_green">#3B6D11</color>
     <color name="light_green">#EAF3DE</color>
     <color name="text_on_green">#C0DD97</color>
-    <color name="button_main">#639922</color>
+    <color name="btn_green">#639922</color>
 </resources>

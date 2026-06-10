@@ -3,8 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#FAFAFA">
 
+    <!-- Top Bar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,7 +24,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name"
+                android:text="CookItUp"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -30,17 +32,21 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/txt_subtitle"
-                android:textColor="#D9FFFFFF"
+                android:text="Masak dari bahan yang ada di dapur"
+                android:textColor="@color/text_on_green"
                 android:textSize="12sp" />
         </LinearLayout>
 
-        <Switch
-            android:id="@+id/switch_theme"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txt_dark_mode"
-            android:textColor="@color/white" />
+        <ImageView
+            android:id="@+id/btn_theme_toggle"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@android:drawable/ic_menu_manage"
+            app:tint="@color/white"
+            android:padding="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"/>
     </LinearLayout>
 
     <LinearLayout
@@ -58,18 +64,32 @@
             <EditText
                 android:id="@+id/et_ingredient"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_weight="1"
-                android:hint="@string/hint_ingredient" />
+                android:hint="Masukkan bahan..."
+                android:background="@android:drawable/edit_text"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textSize="14sp"/>
 
-            <Button
-                android:id="@+id/btn_add_ingredient"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="+"
-                android:backgroundTint="@color/button_main"
-                android:layout_marginStart="8dp"/>
+            <ImageButton
+                android:id="@+id/btn_add_chip"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="8dp"
+                android:background="@color/btn_green"
+                android:src="@android:drawable/ic_input_add"
+                app:tint="@color/white"
+                android:scaleType="centerInside"/>
         </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bahan Tersedia:"
+            android:textColor="@color/primary_green"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"/>
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chip_group_ingredients"
@@ -80,16 +100,19 @@
         <Button
             android:id="@+id/btn_search"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@color/button_main"
-            android:text="@string/btn_search"/>
+            android:layout_height="50dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/btn_green"
+            android:text="CARI RESEP"
+            android:textColor="@color/white"
+            android:textStyle="bold"/>
 
         <ProgressBar
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginTop="16dp"
             android:visibility="gone"/>
 
         <Button
@@ -97,6 +120,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginTop="16dp"
             android:text="Refresh"
             android:visibility="gone"/>
 
