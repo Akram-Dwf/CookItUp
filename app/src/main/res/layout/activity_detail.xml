@@ -4,27 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FAFAFA">
+    android:background="@color/background">
 
     <!-- Top Bar -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        app:elevation="0dp">
+        android:background="@color/surface_container_lowest"
+        app:elevation="2dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:titleTextColor="#333333">
+            app:titleTextColor="@color/on_surface">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Detail Resep"
-                android:textColor="#333333"
+                android:text="Ayam Kecap Pedas"
+                android:textColor="@color/on_surface"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -34,7 +34,7 @@
                 android:layout_gravity="end"
                 android:layout_marginEnd="16dp"
                 android:src="@android:drawable/ic_menu_share"
-                app:tint="#333333" />
+                app:tint="@color/primary" />
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -52,7 +52,7 @@
             <ImageView
                 android:id="@+id/iv_thumbnail"
                 android:layout_width="match_parent"
-                android:layout_height="280dp"
+                android:layout_height="250dp"
                 android:scaleType="centerCrop" />
 
             <!-- Content Area -->
@@ -66,46 +66,39 @@
                     android:id="@+id/tv_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="#333333"
-                    android:textSize="22sp"
+                    android:textColor="@color/primary"
+                    android:textSize="24sp"
                     android:textStyle="bold" />
 
                 <!-- Info Row -->
-                <LinearLayout
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
+                    android:text="Waktu: 45 Menit • Porsi: 4 Orang • Tingkat: Mudah"
+                    android:textColor="@color/on_surface_variant"
+                    android:textSize="14sp"
+                    android:layout_marginTop="4dp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="⏱ 30 mnt"
-                        android:textColor="#666666"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="🍽 2 porsi"
-                        android:textColor="#666666"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="🔥 Mudah"
-                        android:textColor="#666666"
-                        android:textSize="14sp" />
-                </LinearLayout>
+                <!-- Action Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_favorite"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="16dp"
+                    android:text="SIMPAN KE FAVORIT"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/primary"
+                    app:cornerRadius="8dp"
+                    app:icon="@android:drawable/btn_star_big_on"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/white" />
 
                 <!-- Tags -->
                 <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="16dp"
                     android:scrollbars="none">
 
                     <com.google.android.material.chip.ChipGroup
@@ -115,32 +108,26 @@
                         <com.google.android.material.chip.Chip
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Sehat" />
+                            app:chipBackgroundColor="@color/secondary_container"
+                            android:textColor="@color/on_secondary_container"
+                            app:chipStrokeWidth="0dp"
+                            android:text="Sisa Makanan" />
                         <com.google.android.material.chip.Chip
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Keluarga" />
+                            app:chipBackgroundColor="@color/secondary_container"
+                            android:textColor="@color/on_secondary_container"
+                            app:chipStrokeWidth="0dp"
+                            android:text="Ayam" />
                         <com.google.android.material.chip.Chip
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Makan Malam" />
+                            app:chipBackgroundColor="@color/secondary_container"
+                            android:textColor="@color/on_secondary_container"
+                            app:chipStrokeWidth="0dp"
+                            android:text="Pedas Manis" />
                     </com.google.android.material.chip.ChipGroup>
                 </HorizontalScrollView>
-
-                <!-- Action Button -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_favorite"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="16dp"
-                    android:text="SIMPAN KE FAVORIT"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:backgroundTint="@color/btn_green"
-                    app:cornerRadius="12dp"
-                    app:icon="@android:drawable/btn_star_big_on"
-                    app:iconGravity="textStart"
-                    app:iconTint="@color/white" />
 
                 <!-- Ingredients Section -->
                 <TextView
@@ -148,17 +135,19 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
                     android:text="Bahan-bahan"
-                    android:textColor="#333333"
+                    android:textColor="@color/on_surface"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:cardBackgroundColor="@color/white"
+                    android:layout_marginTop="12dp"
+                    app:cardBackgroundColor="@color/surface_container"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp">
+                    app:cardElevation="0dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/outline_variant">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -170,8 +159,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="• Ayam 1 Kg\n• Bawang Putih 3 siung\n• Garam secukupnya\n• Minyak Goreng"
-                            android:textColor="#555555"
-                            android:textSize="14sp"
+                            android:textColor="@color/on_surface"
+                            android:textSize="16sp"
                             android:lineSpacingExtra="6dp"/>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -182,19 +171,36 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
                     android:text="Cara Memasak"
-                    android:textColor="#333333"
+                    android:textColor="@color/on_surface"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tv_instructions"
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="12dp"
                     android:layout_marginBottom="32dp"
-                    android:lineSpacingExtra="4dp"
-                    android:textColor="#555555"
-                    android:textSize="14sp" />
+                    app:cardBackgroundColor="@color/surface_container"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/outline_variant">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        
+                        <TextView
+                            android:id="@+id/tv_instructions"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:lineSpacingExtra="6dp"
+                            android:textColor="@color/on_surface"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
         </LinearLayout>
