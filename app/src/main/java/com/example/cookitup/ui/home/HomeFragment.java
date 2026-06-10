@@ -178,27 +178,15 @@ public class HomeFragment extends Fragment {
                 adapter = new MealAdapter(new ArrayList<>(combinedList));
                 recyclerView.setAdapter(adapter);
 
-                // Wait, MealAdapter might use an interface for clicks or we set it directly if it has setOnItemClickCallback
-                try {
-                    java.lang.reflect.Method method = adapter.getClass().getMethod("setOnItemClickCallback", MealAdapter.OnItemClickCallback.class);
-                    method.invoke(adapter, (MealAdapter.OnItemClickCallback) data -> {
+                adapter.setOnItemClickCallback(data -> {
+                    if (getActivity() != null) {
                         Intent intent = new Intent(getActivity(), DetailActivity.class);
                         intent.putExtra("meal_id", data.getIdMeal());
                         intent.putExtra("meal_name", data.getStrMeal());
                         startActivity(intent);
-                    });
-                } catch (Exception e) {
-                    // Fallback or ignore if the method doesn't exist via reflection, but the original code had it directly:
-                    adapter.setOnItemClickCallback(data -> {
-                        Intent intent = new Intent(getActivity(), DetailActivity.class);
-                        intent.putExtra("meal_id", data.getIdMeal());
-                        intent.putExtra("meal_name", data.getStrMeal());
-                        startActivity(intent);
-                    });
-                }
+                    }
+                });
             }
         }
     }
 }
-
-

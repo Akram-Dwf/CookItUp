@@ -26,7 +26,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="CookItUp"
+                android:text="@string/app_name"
                 android:textColor="@color/primary"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -34,7 +34,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Masak dari bahan yang ada di dapur"
+                android:text="@string/txt_subtitle"
                 android:textColor="@color/on_surface_variant"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -83,7 +83,7 @@
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:hint="Masukkan bahan (contoh: ayam, mie)"
+                    android:hint="@string/hint_ingredient"
                     android:background="@android:color/transparent"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
@@ -107,7 +107,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Bahan Tersedia:"
+                android:text="@string/txt_available_ingredients"
                 android:textColor="@color/on_surface_variant"
                 android:textSize="14sp"
                 android:layout_marginTop="24dp"/>
@@ -124,7 +124,7 @@
                 android:layout_height="56dp"
                 android:layout_marginTop="24dp"
                 android:backgroundTint="@color/primary"
-                android:text="CARI RESEP"
+                android:text="@string/btn_search"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -133,7 +133,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Saran Resep"
+                android:text="@string/txt_recipe_suggestions"
                 android:textColor="@color/on_surface"
                 android:textSize="18sp"
                 android:textStyle="bold"

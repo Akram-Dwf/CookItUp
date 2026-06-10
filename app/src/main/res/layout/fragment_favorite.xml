@@ -26,7 +26,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Resep Favorit"
+                android:text="@string/txt_favorite_title"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -34,7 +34,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Resep yang Anda simpan"
+                android:text="@string/txt_favorite_subtitle"
                 android:textColor="@color/inverse_primary"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -76,7 +76,7 @@
                 android:id="@+id/tv_empty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Belum ada favorit"
+                android:text="@string/txt_empty_title"
                 android:textSize="18sp"
                 android:textColor="@color/on_surface"
                 android:textStyle="bold"
@@ -85,7 +85,7 @@
             <TextView
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                android:text="Anda belum menyimpan resep apa pun. Mulai cari resep untuk menyelamatkan bahan makanan Anda!"
+                android:text="@string/txt_empty_desc"
                 android:textSize="14sp"
                 android:textColor="@color/on_surface_variant"
                 android:textAlignment="center"/>

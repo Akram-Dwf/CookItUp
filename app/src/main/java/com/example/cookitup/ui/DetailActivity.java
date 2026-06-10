@@ -20,6 +20,8 @@ import com.example.cookitup.model.MealDetail;
 import com.example.cookitup.model.MealDetailResponse;
 import com.example.cookitup.network.ApiService;
 import com.example.cookitup.network.RetrofitClient;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.squareup.picasso.Picasso;
 
 import java.util.concurrent.ExecutorService;
@@ -32,8 +34,9 @@ import retrofit2.Response;
 public class DetailActivity extends AppCompatActivity {
 
     private ImageView ivThumbnail;
-    private TextView tvName, tvInstructions;
+    private TextView tvName, tvInstructions, tvToolbarTitle;
     private LinearLayout layoutIngredients;
+    private ChipGroup chipGroupTags;
     private Button btnFavorite;
     private MealHelper mealHelper;
     private MealDetail currentMealDetail;
@@ -49,17 +52,23 @@ public class DetailActivity extends AppCompatActivity {
         tvInstructions = findViewById(R.id.tv_instructions);
         layoutIngredients = findViewById(R.id.layout_ingredients);
         btnFavorite = findViewById(R.id.btn_favorite);
+        tvToolbarTitle = findViewById(R.id.tv_toolbar_title);
+        chipGroupTags = findViewById(R.id.chip_group_tags);
 
+        // Set up toolbar navigation without setSupportActionBar
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
         toolbar.setNavigationOnClickListener(v -> finish());
 
         mealHelper = MealHelper.getInstance(this);
 
         String mealId = getIntent().getStringExtra("meal_id");
+        String mealName = getIntent().getStringExtra("meal_name");
+
+        // Set toolbar title from intent if available
+        if (mealName != null && !mealName.isEmpty()) {
+            tvToolbarTitle.setText(mealName);
+        }
+
         if (mealId != null) {
             loadMealDetail(mealId);
         }
@@ -79,18 +88,41 @@ public class DetailActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null && response.body().getMeals() != null) {
                     currentMealDetail = response.body().getMeals().get(0);
                     tvName.setText(currentMealDetail.getStrMeal());
+                    tvToolbarTitle.setText(currentMealDetail.getStrMeal());
                     tvInstructions.setText(currentMealDetail.getStrInstructions());
                     Picasso.get().load(currentMealDetail.getStrMealThumb()).into(ivThumbnail);
                     populateIngredients(currentMealDetail);
+                    populateTags(currentMealDetail);
                     checkIfFavorite(currentMealDetail.getIdMeal());
                 }
             }
 
             @Override
             public void onFailure(Call<MealDetailResponse> call, Throwable t) {
-                Toast.makeText(DetailActivity.this, "Gagal mengambil data detail", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailActivity.this, getString(R.string.msg_detail_failed), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void populateTags(MealDetail mealDetail) {
+        chipGroupTags.removeAllViews();
+        // Use first 3 non-null ingredients as tag labels
+        String[] sampleIngredients = {
+                mealDetail.getStrIngredient1(),
+                mealDetail.getStrIngredient2(),
+                mealDetail.getStrIngredient3()
+        };
+        for (String tag : sampleIngredients) {
+            if (tag != null && !tag.trim().isEmpty()) {
+                Chip chip = new Chip(this);
+                chip.setText(tag.trim());
+                chip.setChipBackgroundColorResource(R.color.secondary_container);
+                chip.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.on_secondary_container));
+                chip.setChipStrokeWidth(0);
+                chip.setClickable(false);
+                chipGroupTags.addView(chip);
+            }
+        }
     }
 
     private void checkIfFavorite(String mealId) {
@@ -113,14 +145,15 @@ public class DetailActivity extends AppCompatActivity {
 
     private void updateFavoriteButtonUI() {
         if (isFavorite) {
-            btnFavorite.setText("HAPUS DARI FAVORIT");
-            // Change color to error container for delete
+            btnFavorite.setText(getString(R.string.btn_unfavorite));
             ((com.google.android.material.button.MaterialButton) btnFavorite)
-                    .setBackgroundTintList(android.content.res.ColorStateList.valueOf(getResources().getColor(R.color.error)));
+                    .setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                            androidx.core.content.ContextCompat.getColor(this, R.color.error)));
         } else {
-            btnFavorite.setText("SIMPAN KE FAVORIT");
+            btnFavorite.setText(getString(R.string.btn_favorite));
             ((com.google.android.material.button.MaterialButton) btnFavorite)
-                    .setBackgroundTintList(android.content.res.ColorStateList.valueOf(getResources().getColor(R.color.primary)));
+                    .setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                            androidx.core.content.ContextCompat.getColor(this, R.color.primary)));
         }
     }
 
@@ -137,7 +170,7 @@ public class DetailActivity extends AppCompatActivity {
                     if (result > 0) {
                         isFavorite = false;
                         updateFavoriteButtonUI();
-                        Toast.makeText(DetailActivity.this, "Resep dihapus dari favorit!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DetailActivity.this, getString(R.string.msg_removed), Toast.LENGTH_SHORT).show();
                     }
                 });
             } else {
@@ -154,9 +187,9 @@ public class DetailActivity extends AppCompatActivity {
                     if (result > 0) {
                         isFavorite = true;
                         updateFavoriteButtonUI();
-                        Toast.makeText(DetailActivity.this, "Resep disimpan!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DetailActivity.this, getString(R.string.msg_saved), Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(DetailActivity.this, "Gagal menyimpan resep", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DetailActivity.this, getString(R.string.msg_save_failed), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -195,7 +228,7 @@ public class DetailActivity extends AppCompatActivity {
                 TextView tv = new TextView(this);
                 String measureText = (meas != null && !meas.trim().isEmpty()) ? meas.trim() + " - " : "";
                 tv.setText("• " + measureText + ing.trim());
-                tv.setTextColor(getResources().getColor(R.color.on_surface));
+                tv.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.on_surface));
                 tv.setTextSize(16);
                 tv.setPadding(0, 0, 0, 16);
                 layoutIngredients.addView(tv);

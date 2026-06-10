@@ -12,6 +12,7 @@
     <color name="on_secondary_container">#546946</color>
     <color name="outline_variant">#c4c8ba</color>
     <color name="inverse_primary">#add191</color>
+    <color name="error">#ba1a1a</color>
     <color name="error_container">#ffdad6</color>
     <color name="on_error_container">#93000a</color>
     <color name="surface_container">#eaf0e0</color>

@@ -1,19 +1,25 @@
 package com.example.cookitup.adapter;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cookitup.R;
+import com.example.cookitup.database.MealHelper;
 import com.example.cookitup.model.Meal;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHolder> {
 
@@ -49,6 +55,33 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
                 onItemClickCallback.onItemClicked(meal);
             }
         });
+
+        // Un-favorite: remove from SQLite and list on star icon click
+        holder.btnRemoveFavorite.setOnClickListener(v -> {
+            int adapterPosition = holder.getAdapterPosition();
+            if (adapterPosition == RecyclerView.NO_POSITION) return;
+
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Handler handler = new Handler(Looper.getMainLooper());
+
+            executor.execute(() -> {
+                MealHelper mealHelper = MealHelper.getInstance(v.getContext());
+                mealHelper.open();
+                long result = mealHelper.deleteById(meal.getIdMeal());
+                mealHelper.close();
+
+                handler.post(() -> {
+                    if (result > 0) {
+                        meals.remove(adapterPosition);
+                        notifyItemRemoved(adapterPosition);
+                        notifyItemRangeChanged(adapterPosition, meals.size());
+                        Toast.makeText(v.getContext(),
+                                v.getContext().getString(R.string.msg_removed),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            });
+        });
     }
 
     @Override
@@ -59,11 +92,13 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName;
         ImageView ivThumbnail;
+        View btnRemoveFavorite;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tv_name);
             ivThumbnail = itemView.findViewById(R.id.iv_thumbnail);
+            btnRemoveFavorite = itemView.findViewById(R.id.btn_remove_favorite);
         }
     }
 

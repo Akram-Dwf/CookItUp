@@ -18,13 +18,15 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="?attr/homeAsUpIndicator"
             app:titleTextColor="@color/on_surface">
 
             <TextView
+                android:id="@+id/tv_toolbar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Ayam Kecap Pedas"
+                android:text="Recipe Detail"
                 android:textColor="@color/on_surface"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -73,9 +75,10 @@
 
                 <!-- Info Row -->
                 <TextView
+                    android:id="@+id/tv_info_row"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Waktu: 45 Menit • Porsi: 4 Orang • Tingkat: Mudah"
+                    android:text="@string/txt_detail_info"
                     android:textColor="@color/on_surface_variant"
                     android:textSize="14sp"
                     android:layout_marginTop="4dp" />
@@ -86,7 +89,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:layout_marginTop="16dp"
-                    android:text="SIMPAN KE FAVORIT"
+                    android:text="@string/btn_favorite"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:backgroundTint="@color/primary"
@@ -97,37 +100,17 @@
 
                 <!-- Tags -->
                 <HorizontalScrollView
+                    android:id="@+id/scroll_tags"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:scrollbars="none">
 
                     <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chip_group_tags"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:singleLine="true">
-                        <com.google.android.material.chip.Chip
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:chipBackgroundColor="@color/secondary_container"
-                            android:textColor="@color/on_secondary_container"
-                            app:chipStrokeWidth="0dp"
-                            android:text="Sisa Makanan" />
-                        <com.google.android.material.chip.Chip
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:chipBackgroundColor="@color/secondary_container"
-                            android:textColor="@color/on_secondary_container"
-                            app:chipStrokeWidth="0dp"
-                            android:text="Ayam" />
-                        <com.google.android.material.chip.Chip
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:chipBackgroundColor="@color/secondary_container"
-                            android:textColor="@color/on_secondary_container"
-                            app:chipStrokeWidth="0dp"
-                            android:text="Pedas Manis" />
-                    </com.google.android.material.chip.ChipGroup>
+                        app:singleLine="true" />
                 </HorizontalScrollView>
 
                 <!-- Ingredients Section -->
@@ -135,7 +118,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="Bahan-bahan"
+                    android:text="@string/txt_ingredients"
                     android:textColor="@color/on_surface"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -164,7 +147,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="Cara Memasak"
+                    android:text="@string/txt_instructions"
                     android:textColor="@color/on_surface"
                     android:textSize="18sp"
                     android:textStyle="bold" />
