@@ -119,8 +119,8 @@ public class HomeFragment extends Fragment {
         Chip chip = new Chip(getContext());
         chip.setText(ingredient);
         chip.setCloseIconVisible(true);
-        chip.setChipBackgroundColorResource(R.color.light_green);
-        chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary_green));
+        chip.setChipBackgroundColorResource(R.color.secondary_container);
+        chip.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.on_secondary_container));
         chip.setOnCloseIconClickListener(v -> {
             chipGroupIngredients.removeView(chip);
             ingredients.remove(ingredient);
