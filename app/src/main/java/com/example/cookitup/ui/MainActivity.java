@@ -21,16 +21,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+        // MUST apply theme BEFORE super.onCreate to prevent flash/glitch
         android.content.SharedPreferences sharedPreferences = getSharedPreferences("cookitup_prefs", android.content.Context.MODE_PRIVATE);
         boolean isDarkMode = sharedPreferences.getBoolean("dark_mode", false);
-        if (isDarkMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
+        AppCompatDelegate.setDefaultNightMode(
+                isDarkMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
+        );
 
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         viewPager = findViewById(R.id.view_pager);

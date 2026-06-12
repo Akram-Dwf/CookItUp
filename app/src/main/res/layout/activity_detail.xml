@@ -33,135 +33,281 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <!-- ======= SKELETON PLACEHOLDER (shown while loading) ======= -->
+        <ScrollView
+            android:id="@+id/skeleton_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:visibility="visible">
 
-            <!-- Hero Image -->
-            <ImageView
-                android:id="@+id/iv_thumbnail"
-                android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:scaleType="centerCrop" />
-
-            <!-- Content Area -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tv_name"
+                <!-- Image placeholder -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:background="@drawable/shimmer_placeholder" />
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/primary"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                <!-- Action Button -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_favorite"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/btn_favorite"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    app:backgroundTint="@color/primary"
-                    app:cornerRadius="8dp"
-                    app:icon="@drawable/ic_favorite"
-                    app:iconGravity="textStart"
-                    app:iconTint="@color/white" />
+                    <!-- Title placeholder -->
+                    <View
+                        android:layout_width="220dp"
+                        android:layout_height="28dp"
+                        android:background="@drawable/shimmer_placeholder" />
 
-                <!-- Tags -->
-                <HorizontalScrollView
-                    android:id="@+id/scroll_tags"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:scrollbars="none">
+                    <!-- Button placeholder -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/shimmer_placeholder" />
 
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/chip_group_tags"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:singleLine="true" />
-                </HorizontalScrollView>
-
-                <!-- Ingredients Section -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="@string/txt_ingredients"
-                    android:textColor="@color/on_surface"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    app:cardBackgroundColor="@color/surface_container"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="0dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="@color/outline_variant">
-
+                    <!-- Tags placeholder -->
                     <LinearLayout
-                        android:id="@+id/layout_ingredients"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp">
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="80dp"
+                            android:layout_height="32dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/shimmer_placeholder" />
+                        <View
+                            android:layout_width="60dp"
+                            android:layout_height="32dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/shimmer_placeholder" />
+                        <View
+                            android:layout_width="70dp"
+                            android:layout_height="32dp"
+                            android:background="@drawable/shimmer_placeholder" />
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
 
-                <!-- Instructions Section -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="@string/txt_instructions"
-                    android:textColor="@color/on_surface"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    <!-- "Ingredients" label placeholder -->
+                    <View
+                        android:layout_width="120dp"
+                        android:layout_height="20dp"
+                        android:layout_marginTop="24dp"
+                        android:background="@drawable/shimmer_placeholder" />
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="32dp"
-                    app:cardBackgroundColor="@color/surface_container"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="0dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="@color/outline_variant">
-
-                    <LinearLayout
+                    <!-- Ingredients card placeholder -->
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp">
-                        
-                        <TextView
-                            android:id="@+id/tv_instructions"
+                        android:layout_marginTop="12dp"
+                        app:cardBackgroundColor="@color/surface_container"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="@color/outline_variant">
+
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:lineSpacingExtra="6dp"
-                            android:textColor="@color/on_surface"
-                            android:textSize="16sp" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                            android:orientation="vertical"
+                            android:padding="16dp">
+                            <View android:layout_width="match_parent" android:layout_height="16dp"
+                                android:background="@drawable/shimmer_placeholder" android:layout_marginBottom="12dp" />
+                            <View android:layout_width="200dp" android:layout_height="16dp"
+                                android:background="@drawable/shimmer_placeholder" android:layout_marginBottom="12dp" />
+                            <View android:layout_width="240dp" android:layout_height="16dp"
+                                android:background="@drawable/shimmer_placeholder" android:layout_marginBottom="12dp" />
+                            <View android:layout_width="180dp" android:layout_height="16dp"
+                                android:background="@drawable/shimmer_placeholder" android:layout_marginBottom="12dp" />
+                            <View android:layout_width="220dp" android:layout_height="16dp"
+                                android:background="@drawable/shimmer_placeholder" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
+                    <!-- "How to Cook" label placeholder -->
+                    <View
+                        android:layout_width="100dp"
+                        android:layout_height="20dp"
+                        android:layout_marginTop="24dp"
+                        android:background="@drawable/shimmer_placeholder" />
+
+                    <!-- Instructions card placeholder -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="32dp"
+                        app:cardBackgroundColor="@color/surface_container"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="@color/outline_variant">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+                            <View android:layout_width="match_parent" android:layout_height="16dp"
+                                android:background="@drawable/shimmer_placeholder" android:layout_marginBottom="12dp" />
+                            <View android:layout_width="match_parent" android:layout_height="16dp"
+                                android:background="@drawable/shimmer_placeholder" android:layout_marginBottom="12dp" />
+                            <View android:layout_width="280dp" android:layout_height="16dp"
+                                android:background="@drawable/shimmer_placeholder" android:layout_marginBottom="12dp" />
+                            <View android:layout_width="match_parent" android:layout_height="16dp"
+                                android:background="@drawable/shimmer_placeholder" android:layout_marginBottom="12dp" />
+                            <View android:layout_width="200dp" android:layout_height="16dp"
+                                android:background="@drawable/shimmer_placeholder" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
+        </ScrollView>
+
+        <!-- ======= ACTUAL CONTENT (hidden until data loaded) ======= -->
+        <ScrollView
+            android:id="@+id/content_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Hero Image -->
+                <ImageView
+                    android:id="@+id/iv_thumbnail"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:scaleType="centerCrop" />
+
+                <!-- Content Area -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tv_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/primary"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <!-- Action Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_favorite"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/btn_favorite"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="@color/primary"
+                        app:cornerRadius="8dp"
+                        app:icon="@drawable/ic_favorite"
+                        app:iconGravity="textStart"
+                        app:iconTint="@color/white" />
+
+                    <!-- Tags -->
+                    <HorizontalScrollView
+                        android:id="@+id/scroll_tags"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:scrollbars="none">
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chip_group_tags"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:singleLine="true" />
+                    </HorizontalScrollView>
+
+                    <!-- Ingredients Section -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:text="@string/txt_ingredients"
+                        android:textColor="@color/on_surface"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        app:cardBackgroundColor="@color/surface_container"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="@color/outline_variant">
+
+                        <LinearLayout
+                            android:id="@+id/layout_ingredients"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Instructions Section -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:text="@string/txt_instructions"
+                        android:textColor="@color/on_surface"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="32dp"
+                        app:cardBackgroundColor="@color/surface_container"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="@color/outline_variant">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+                            
+                            <TextView
+                                android:id="@+id/tv_instructions"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:lineSpacingExtra="6dp"
+                                android:textColor="@color/on_surface"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+    </FrameLayout>
 </LinearLayout>

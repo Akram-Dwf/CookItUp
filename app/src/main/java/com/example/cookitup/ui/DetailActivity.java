@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.graphics.drawable.AnimationDrawable;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -44,6 +46,8 @@ public class DetailActivity extends AppCompatActivity {
     private MealHelper mealHelper;
     private MealDetail currentMealDetail;
     private boolean isFavorite = false;
+    private View skeletonLayout;
+    private View contentLayout;
 
     // Store ingredients JSON for local persistence
     private String ingredientsJson = null;
@@ -53,6 +57,8 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        skeletonLayout = findViewById(R.id.skeleton_layout);
+        contentLayout = findViewById(R.id.content_layout);
         ivThumbnail = findViewById(R.id.iv_thumbnail);
         tvName = findViewById(R.id.tv_name);
         tvInstructions = findViewById(R.id.tv_instructions);
@@ -64,6 +70,9 @@ public class DetailActivity extends AppCompatActivity {
         // Set up toolbar navigation without setSupportActionBar
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());
+
+        // Start shimmer animation on skeleton
+        startShimmer();
 
         mealHelper = MealHelper.getInstance(this);
 
@@ -94,6 +103,7 @@ public class DetailActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null && response.body().getMeals() != null) {
                     currentMealDetail = response.body().getMeals().get(0);
                     displayMealDetail(currentMealDetail);
+                    showContent();
                     checkIfFavorite(currentMealDetail.getIdMeal());
                 } else {
                     // API returned empty — try local
@@ -157,6 +167,7 @@ public class DetailActivity extends AppCompatActivity {
                         populateTagsFromJson(ingredientsData);
                     }
 
+                    showContent();
                     isFavorite = true;
                     updateFavoriteButtonUI();
 
@@ -168,6 +179,7 @@ public class DetailActivity extends AppCompatActivity {
                 if (cursor != null) cursor.close();
                 mealHelper.close();
                 handler.post(() -> {
+                    showContent();
                     Toast.makeText(DetailActivity.this,
                             getString(R.string.msg_detail_failed),
                             Toast.LENGTH_SHORT).show();
@@ -415,5 +427,38 @@ public class DetailActivity extends AppCompatActivity {
                 layoutIngredients.addView(tv);
             }
         }
+    }
+
+    /**
+     * Start pulse animation on all skeleton placeholder views.
+     */
+    private void startShimmer() {
+        if (skeletonLayout instanceof android.view.ViewGroup) {
+            startAnimationsRecursive((android.view.ViewGroup) skeletonLayout);
+        }
+    }
+
+    private void startAnimationsRecursive(android.view.ViewGroup parent) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child.getBackground() instanceof AnimationDrawable) {
+                ((AnimationDrawable) child.getBackground()).start();
+            }
+            if (child instanceof android.view.ViewGroup) {
+                startAnimationsRecursive((android.view.ViewGroup) child);
+            }
+        }
+    }
+
+    /**
+     * Crossfade from skeleton placeholder to real content.
+     */
+    private void showContent() {
+        contentLayout.setAlpha(0f);
+        contentLayout.setVisibility(View.VISIBLE);
+        contentLayout.animate().alpha(1f).setDuration(300).start();
+        skeletonLayout.animate().alpha(0f).setDuration(200).withEndAction(() ->
+                skeletonLayout.setVisibility(View.GONE)
+        ).start();
     }
 }
