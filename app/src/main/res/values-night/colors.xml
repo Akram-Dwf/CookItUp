@@ -19,7 +19,7 @@
     <color name="on_secondary">#223514</color>
     <color name="on_secondary_container">#d2eabf</color>
     
-    <color name="error">#ffb4ab</color>
+    <color name="error">#FF5252</color>
     <color name="error_container">#93000a</color>
     <color name="on_error">#690005</color>
     <color name="on_error_container">#ffdad6</color>

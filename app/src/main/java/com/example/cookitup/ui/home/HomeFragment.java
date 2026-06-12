@@ -3,6 +3,7 @@ package com.example.cookitup.ui.home;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -41,11 +42,13 @@ import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
 
+    private static final int MAX_RESULTS = 20;
+
     private EditText etIngredient;
     private android.widget.ImageButton btnAddIngredient;
     private Button btnSearch, btnRefresh;
     private ChipGroup chipGroupIngredients;
-    private ProgressBar progressBar;
+    private LinearLayout skeletonContainer;
     private RecyclerView recyclerView;
     private MealAdapter adapter;
     private ImageView btnThemeToggle;
@@ -68,10 +71,14 @@ public class HomeFragment extends Fragment {
         chipGroupIngredients = view.findViewById(R.id.chip_group_ingredients);
         btnSearch = view.findViewById(R.id.btn_search);
         btnRefresh = view.findViewById(R.id.btn_refresh);
-        progressBar = view.findViewById(R.id.progress_bar);
+        skeletonContainer = view.findViewById(R.id.skeleton_container);
         recyclerView = view.findViewById(R.id.recycler_view);
 
+        // RecyclerView performance optimizations
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setItemViewCacheSize(20);
+        recyclerView.setHasFixedSize(false);
+
         sharedPreferences = requireActivity().getSharedPreferences("cookitup_prefs", Context.MODE_PRIVATE);
         
         // Use activity scope so ViewModel survives fragment replacement and dark mode toggle!
@@ -110,7 +117,6 @@ public class HomeFragment extends Fragment {
 
         btnSearch.setOnClickListener(v -> {
             if (viewModel.ingredients.isEmpty()) {
-                // If user clears ingredients and clicks search, clear results
                 viewModel.searchResults.setValue(new ArrayList<>());
                 Toast.makeText(getContext(), getString(R.string.hint_ingredient), Toast.LENGTH_SHORT).show();
             } else {
@@ -127,10 +133,12 @@ public class HomeFragment extends Fragment {
         // Observe ViewModel data
         viewModel.isSearching.observe(getViewLifecycleOwner(), isSearching -> {
             if (isSearching) {
-                progressBar.setVisibility(View.VISIBLE);
+                showSkeleton();
                 btnRefresh.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
             } else {
-                progressBar.setVisibility(View.GONE);
+                hideSkeleton();
+                recyclerView.setVisibility(View.VISIBLE);
             }
         });
 
@@ -151,6 +159,33 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    /**
+     * Show skeleton loading placeholder and start shimmer animation.
+     */
+    private void showSkeleton() {
+        skeletonContainer.setVisibility(View.VISIBLE);
+        startAnimationsRecursive(skeletonContainer);
+    }
+
+    /**
+     * Hide skeleton with fade out.
+     */
+    private void hideSkeleton() {
+        skeletonContainer.setVisibility(View.GONE);
+    }
+
+    private void startAnimationsRecursive(ViewGroup parent) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child.getBackground() instanceof AnimationDrawable) {
+                ((AnimationDrawable) child.getBackground()).start();
+            }
+            if (child instanceof ViewGroup) {
+                startAnimationsRecursive((ViewGroup) child);
+            }
+        }
+    }
+
     private void addChip(String ingredient) {
         Chip chip = new Chip(getContext());
         chip.setText(ingredient);
@@ -161,7 +196,6 @@ public class HomeFragment extends Fragment {
             chipGroupIngredients.removeView(chip);
             viewModel.ingredients.remove(ingredient);
             if (viewModel.ingredients.isEmpty()) {
-                // Clear search if no ingredients left
                 viewModel.searchResults.setValue(new ArrayList<>());
             }
         });
@@ -211,11 +245,15 @@ public class HomeFragment extends Fragment {
             viewModel.isSearching.setValue(false);
             
             List<Meal> intersectionList = new ArrayList<>();
-            // Only add meals that appeared in ALL ingredient API responses
             for (String id : uniqueMeals.keySet()) {
                 if (mealOccurrences.get(id) == viewModel.ingredients.size()) {
                     intersectionList.add(uniqueMeals.get(id));
                 }
+            }
+
+            // Cap results to MAX_RESULTS to prevent UI lag
+            if (intersectionList.size() > MAX_RESULTS) {
+                intersectionList = intersectionList.subList(0, MAX_RESULTS);
             }
 
             if (hasError && intersectionList.isEmpty()) {
@@ -225,7 +263,6 @@ public class HomeFragment extends Fragment {
                 Toast.makeText(getContext(), getString(R.string.msg_no_data), Toast.LENGTH_SHORT).show();
             }
             
-            // Save results to ViewModel so it persists
             viewModel.searchResults.setValue(intersectionList);
         }
     }
