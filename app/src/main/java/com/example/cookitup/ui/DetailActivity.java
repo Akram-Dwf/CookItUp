@@ -121,9 +121,9 @@ public class DetailActivity extends AppCompatActivity {
 
     // Load dari SQLite jika sedang offline
     private void loadFromLocalDatabase(String mealId) {
-        // Gunakan ExecutorService agar query SQLite berjalan di background thread (Syarat Lab)
+        // Gunakan ExecutorService agar query SQLite berjalan di background thread
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        // Handler untuk kembali ke Main UI Thread (Syarat Lab)
+        // Handler untuk kembali ke Main UI Thread
         Handler handler = new Handler(Looper.getMainLooper());
 
         executor.execute(() -> {
