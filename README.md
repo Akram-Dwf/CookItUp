@@ -1,6 +1,19 @@
-# 🍳 CookItUp
+<p align="center">
+  <img src="assets/logo.png" alt="CookItUp Logo" width="120" />
+</p>
 
-> **Cook with what you have.**
+<h1 align="center">🍳 CookItUp</h1>
+
+<p align="center">
+  <strong>Cook with what you have.</strong>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Platform-Android-green?logo=android" />
+  <img src="https://img.shields.io/badge/Language-Java-orange?logo=java" />
+  <img src="https://img.shields.io/badge/API-TheMealDB-blue" />
+  <img src="https://img.shields.io/badge/Min%20SDK-21-brightgreen" />
+</p>
 
 CookItUp is an Android app that helps you discover recipes based on ingredients you already have in your kitchen. Simply add your available ingredients, and CookItUp will recommend meals you can cook right away — no extra shopping needed.
 
