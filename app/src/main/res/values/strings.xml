@@ -24,5 +24,6 @@
     <string name="msg_removed">Recipe removed from favorites!</string>
     <string name="msg_save_failed">Failed to save recipe</string>
     <string name="msg_detail_failed">Failed to load recipe details</string>
+    <string name="msg_loaded_offline">Loaded from saved data (offline)</string>
     <string name="txt_find_recipes_now">Find Recipes Now</string>
 </resources>

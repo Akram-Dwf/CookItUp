@@ -10,5 +10,6 @@ public class DatabaseContract {
         public static final String MEAL_NAME = "meal_name";
         public static final String THUMBNAIL = "thumbnail";
         public static final String INSTRUCTIONS = "instructions";
+        public static final String INGREDIENTS = "ingredients";
     }
 }
