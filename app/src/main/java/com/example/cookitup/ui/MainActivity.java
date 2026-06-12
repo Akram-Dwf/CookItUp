@@ -1,6 +1,11 @@
 package com.example.cookitup.ui;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,8 +21,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int SPLASH_DURATION = 2500;
+
     private ViewPager2 viewPager;
     private BottomNavigationView bottomNav;
+    private View splashOverlay;
+    private View mainContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +40,73 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        splashOverlay = findViewById(R.id.splash_overlay);
+        mainContent = findViewById(R.id.main_content);
+
+        // Only show splash on first launch, not on config changes (dark mode toggle)
+        if (savedInstanceState == null) {
+            showSplash();
+        } else {
+            // Skip splash on recreation (e.g., dark mode switch)
+            splashOverlay.setVisibility(View.GONE);
+            mainContent.setVisibility(View.VISIBLE);
+        }
+
+        setupMainContent();
+    }
+
+    private void showSplash() {
+        splashOverlay.setVisibility(View.VISIBLE);
+        mainContent.setVisibility(View.GONE);
+
+        ImageView logo = findViewById(R.id.splash_logo);
+        TextView title = findViewById(R.id.splash_title);
+        TextView subtitle = findViewById(R.id.splash_subtitle);
+
+        // Logo: scale up + fade in
+        logo.setAlpha(0f);
+        logo.setScaleX(0.5f);
+        logo.setScaleY(0.5f);
+        logo.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(800)
+                .setStartDelay(200)
+                .start();
+
+        // Title: slide up + fade in
+        title.setAlpha(0f);
+        title.setTranslationY(30f);
+        title.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(600)
+                .setStartDelay(600)
+                .start();
+
+        // Subtitle: slide up + fade in
+        subtitle.setAlpha(0f);
+        subtitle.setTranslationY(20f);
+        subtitle.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(600)
+                .setStartDelay(900)
+                .start();
+
+        // After delay, crossfade to main content
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            mainContent.setVisibility(View.VISIBLE);
+            mainContent.setAlpha(0f);
+            mainContent.animate().alpha(1f).setDuration(400).start();
+            splashOverlay.animate().alpha(0f).setDuration(300).withEndAction(() ->
+                    splashOverlay.setVisibility(View.GONE)
+            ).start();
+        }, SPLASH_DURATION);
+    }
+
+    private void setupMainContent() {
         viewPager = findViewById(R.id.view_pager);
         bottomNav = findViewById(R.id.bottom_navigation);
 
