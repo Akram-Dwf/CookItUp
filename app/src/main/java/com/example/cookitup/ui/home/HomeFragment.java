@@ -49,6 +49,7 @@ public class HomeFragment extends Fragment {
     private Button btnSearch, btnRefresh;
     private ChipGroup chipGroupIngredients;
     private LinearLayout skeletonContainer;
+    private LinearLayout emptyHomeLayout;
     private RecyclerView recyclerView;
     private MealAdapter adapter;
     private ImageView btnThemeToggle;
@@ -72,6 +73,7 @@ public class HomeFragment extends Fragment {
         btnSearch = view.findViewById(R.id.btn_search);
         btnRefresh = view.findViewById(R.id.btn_refresh);
         skeletonContainer = view.findViewById(R.id.skeleton_container);
+        emptyHomeLayout = view.findViewById(R.id.layout_empty_home);
         recyclerView = view.findViewById(R.id.recycler_view);
 
         // RecyclerView performance optimizations
@@ -136,6 +138,7 @@ public class HomeFragment extends Fragment {
                 showSkeleton();
                 btnRefresh.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
+                emptyHomeLayout.setVisibility(View.GONE);
             } else {
                 hideSkeleton();
                 recyclerView.setVisibility(View.VISIBLE);
@@ -144,6 +147,15 @@ public class HomeFragment extends Fragment {
 
         viewModel.searchResults.observe(getViewLifecycleOwner(), meals -> {
             if (meals != null) {
+                // Show/hide empty state based on results
+                if (meals.isEmpty() && viewModel.ingredients.isEmpty()) {
+                    emptyHomeLayout.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                } else {
+                    emptyHomeLayout.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                }
+
                 adapter = new MealAdapter(new ArrayList<>(meals));
                 recyclerView.setAdapter(adapter);
 

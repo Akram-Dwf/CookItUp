@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,6 +23,7 @@ import com.example.cookitup.network.ApiService;
 import com.example.cookitup.network.RetrofitClient;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -171,18 +171,18 @@ public class DetailActivity extends AppCompatActivity {
                     isFavorite = true;
                     updateFavoriteButtonUI();
 
-                    Toast.makeText(DetailActivity.this,
+                    Snackbar.make(btnFavorite,
                             getString(R.string.msg_loaded_offline),
-                            Toast.LENGTH_SHORT).show();
+                            Snackbar.LENGTH_SHORT).show();
                 });
             } else {
                 if (cursor != null) cursor.close();
                 mealHelper.close();
                 handler.post(() -> {
                     showContent();
-                    Toast.makeText(DetailActivity.this,
+                    Snackbar.make(findViewById(android.R.id.content),
                             getString(R.string.msg_detail_failed),
-                            Toast.LENGTH_SHORT).show();
+                            Snackbar.LENGTH_SHORT).show();
                 });
             }
         });
@@ -359,7 +359,13 @@ public class DetailActivity extends AppCompatActivity {
                     if (result > 0) {
                         isFavorite = false;
                         updateFavoriteButtonUI();
-                        Toast.makeText(DetailActivity.this, getString(R.string.msg_removed), Toast.LENGTH_SHORT).show();
+                        // Snackbar with UNDO
+                        Snackbar.make(btnFavorite, getString(R.string.msg_removed), Snackbar.LENGTH_LONG)
+                                .setAction(getString(R.string.snackbar_undo), v -> {
+                                    // Re-insert the meal on UNDO
+                                    reInsertFavorite(mealDetail);
+                                })
+                                .show();
                     }
                 });
             } else {
@@ -380,9 +386,9 @@ public class DetailActivity extends AppCompatActivity {
                     if (result > 0) {
                         isFavorite = true;
                         updateFavoriteButtonUI();
-                        Toast.makeText(DetailActivity.this, getString(R.string.msg_saved), Toast.LENGTH_SHORT).show();
+                        Snackbar.make(btnFavorite, getString(R.string.msg_saved), Snackbar.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(DetailActivity.this, getString(R.string.msg_save_failed), Toast.LENGTH_SHORT).show();
+                        Snackbar.make(btnFavorite, getString(R.string.msg_save_failed), Snackbar.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -460,5 +466,36 @@ public class DetailActivity extends AppCompatActivity {
         skeletonLayout.animate().alpha(0f).setDuration(200).withEndAction(() ->
                 skeletonLayout.setVisibility(View.GONE)
         ).start();
+    }
+
+    /**
+     * Re-insert a favorite meal (used by UNDO action in Snackbar).
+     */
+    private void reInsertFavorite(MealDetail mealDetail) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            ContentValues values = new ContentValues();
+            values.put(DatabaseContract.MealColumns.MEAL_ID, mealDetail.getIdMeal());
+            values.put(DatabaseContract.MealColumns.MEAL_NAME, mealDetail.getStrMeal());
+            values.put(DatabaseContract.MealColumns.THUMBNAIL, mealDetail.getStrMealThumb());
+            values.put(DatabaseContract.MealColumns.INSTRUCTIONS, mealDetail.getStrInstructions());
+            if (ingredientsJson != null) {
+                values.put(DatabaseContract.MealColumns.INGREDIENTS, ingredientsJson);
+            }
+
+            mealHelper.open();
+            long result = mealHelper.insert(values);
+            mealHelper.close();
+
+            handler.post(() -> {
+                if (result > 0) {
+                    isFavorite = true;
+                    updateFavoriteButtonUI();
+                    Snackbar.make(btnFavorite, getString(R.string.msg_saved), Snackbar.LENGTH_SHORT).show();
+                }
+            });
+        });
     }
 }

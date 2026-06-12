@@ -26,4 +26,7 @@
     <string name="msg_detail_failed">Failed to load recipe details</string>
     <string name="msg_loaded_offline">Loaded from saved data (offline)</string>
     <string name="txt_find_recipes_now">Find Recipes Now</string>
+    <string name="txt_empty_home_title">What\'s in your kitchen?</string>
+    <string name="txt_empty_home_desc">Add ingredients above and tap Find Recipes to discover what you can cook!</string>
+    <string name="snackbar_undo">UNDO</string>
 </resources>

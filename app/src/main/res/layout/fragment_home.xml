@@ -163,6 +163,42 @@
                 android:text="Refresh"
                 android:visibility="gone"/>
 
+            <!-- Empty State (shown before any search) -->
+            <LinearLayout
+                android:id="@+id/layout_empty_home"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingTop="32dp"
+                android:paddingBottom="32dp"
+                android:visibility="visible">
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/ic_cooking_pot"
+                    app:tint="@color/outline_variant"
+                    android:layout_marginBottom="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txt_empty_home_title"
+                    android:textColor="@color/on_surface"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txt_empty_home_desc"
+                    android:textColor="@color/on_surface_variant"
+                    android:textSize="14sp"
+                    android:textAlignment="center"/>
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"

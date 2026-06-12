@@ -1,5 +1,6 @@
 package com.example.cookitup.adapter;
 
+import android.content.ContentValues;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
@@ -7,14 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cookitup.R;
+import com.example.cookitup.database.DatabaseContract;
 import com.example.cookitup.database.MealHelper;
 import com.example.cookitup.model.Meal;
+import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -56,7 +58,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
             }
         });
 
-        // Un-favorite: remove from SQLite and list on star icon click
+        // Un-favorite: remove from SQLite and list on heart icon click
         holder.btnRemoveFavorite.setOnClickListener(v -> {
             int adapterPosition = holder.getAdapterPosition();
             if (adapterPosition == RecyclerView.NO_POSITION) return;
@@ -75,9 +77,31 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
                         meals.remove(adapterPosition);
                         notifyItemRemoved(adapterPosition);
                         notifyItemRangeChanged(adapterPosition, meals.size());
-                        Toast.makeText(v.getContext(),
-                                v.getContext().getString(R.string.msg_removed),
-                                Toast.LENGTH_SHORT).show();
+
+                        // Snackbar with UNDO to re-insert
+                        Snackbar.make(v, v.getContext().getString(R.string.msg_removed), Snackbar.LENGTH_LONG)
+                                .setAction(v.getContext().getString(R.string.snackbar_undo), undoView -> {
+                                    // Re-insert on UNDO
+                                    executor.execute(() -> {
+                                        ContentValues values = new ContentValues();
+                                        values.put(DatabaseContract.MealColumns.MEAL_ID, meal.getIdMeal());
+                                        values.put(DatabaseContract.MealColumns.MEAL_NAME, meal.getStrMeal());
+                                        values.put(DatabaseContract.MealColumns.THUMBNAIL, meal.getStrMealThumb());
+
+                                        MealHelper undoHelper = MealHelper.getInstance(undoView.getContext());
+                                        undoHelper.open();
+                                        long undoResult = undoHelper.insert(values);
+                                        undoHelper.close();
+
+                                        handler.post(() -> {
+                                            if (undoResult > 0) {
+                                                meals.add(adapterPosition, meal);
+                                                notifyItemInserted(adapterPosition);
+                                            }
+                                        });
+                                    });
+                                })
+                                .show();
                     }
                 });
             });
