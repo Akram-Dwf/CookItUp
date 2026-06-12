@@ -42,6 +42,8 @@ import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
 
+    private static final int MAX_RESULTS = 30;
+
 
     private EditText etIngredient;
     private android.widget.ImageButton btnAddIngredient;
@@ -99,6 +101,11 @@ public class HomeFragment extends Fragment {
 
         btnThemeToggle = view.findViewById(R.id.btn_theme_toggle);
         btnThemeToggle.setOnClickListener(v -> {
+            // Save scroll position BEFORE mode switch recreates activity
+            if (recyclerView.getLayoutManager() != null) {
+                viewModel.recyclerViewState = recyclerView.getLayoutManager().onSaveInstanceState();
+            }
+
             boolean currentMode = sharedPreferences.getBoolean("dark_mode", false);
             boolean newMode = !currentMode;
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -169,6 +176,12 @@ public class HomeFragment extends Fragment {
 
                 // Reuse adapter — just swap data, don't recreate
                 adapter.setData(new ArrayList<>(meals));
+
+                // Restore scroll position after mode switch
+                if (viewModel.recyclerViewState != null && recyclerView.getLayoutManager() != null) {
+                    recyclerView.getLayoutManager().onRestoreInstanceState(viewModel.recyclerViewState);
+                    viewModel.recyclerViewState = null;
+                }
             }
         });
     }
@@ -264,6 +277,10 @@ public class HomeFragment extends Fragment {
                 }
             }
 
+            // Cap results for smooth performance during mode switch
+            if (intersectionList.size() > MAX_RESULTS) {
+                intersectionList = intersectionList.subList(0, MAX_RESULTS);
+            }
 
             if (hasError && intersectionList.isEmpty()) {
                 btnRefresh.setVisibility(View.VISIBLE);
