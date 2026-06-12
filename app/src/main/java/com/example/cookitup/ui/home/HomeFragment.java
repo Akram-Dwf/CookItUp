@@ -218,7 +218,6 @@ public class HomeFragment extends Fragment {
 
     private void searchMeals() {
         viewModel.isSearching.setValue(true);
-        recyclerView.setAdapter(null);
 
         ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
         HashMap<String, Meal> uniqueMeals = new HashMap<>();
