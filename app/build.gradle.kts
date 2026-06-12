@@ -54,4 +54,7 @@ dependencies {
 
     // Material Design
     implementation("com.google.android.material:material:1.9.0")
+
+    // ViewPager2 for swipe navigation
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
 }

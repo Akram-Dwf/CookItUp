@@ -25,7 +25,7 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop" />
 
-            <!-- Star Icon Overlay — clickable to remove from favorites -->
+            <!-- Heart Icon Overlay — clickable to remove from favorites -->
             <FrameLayout
                 android:id="@+id/btn_remove_favorite"
                 android:layout_width="36dp"
@@ -40,8 +40,8 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center"
-                    android:src="@android:drawable/btn_star_big_on"
-                    app:tint="@color/primary" />
+                    android:src="@drawable/ic_favorite"
+                    app:tint="@color/error" />
             </FrameLayout>
         </FrameLayout>
 
@@ -58,7 +58,7 @@
                 android:textColor="@color/on_surface"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:maxLines="1"
+                android:maxLines="2"
                 android:ellipsize="end"/>
 
             <TextView
@@ -68,28 +68,6 @@
                 android:text="@string/txt_saved_offline"
                 android:textColor="@color/on_surface_variant"
                 android:textSize="12sp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@android:drawable/ic_menu_recent_history"
-                    app:tint="@color/on_surface_variant" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="15 min"
-                    android:textColor="@color/on_surface_variant"
-                    android:textSize="12sp" />
-            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
