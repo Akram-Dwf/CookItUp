@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // MUST apply theme BEFORE super.onCreate to prevent flash/glitch
+        // Terapkan tema sebelum super.onCreate agar tidak glitch
         android.content.SharedPreferences sharedPreferences = getSharedPreferences("cookitup_prefs", android.content.Context.MODE_PRIVATE);
         boolean isDarkMode = sharedPreferences.getBoolean("dark_mode", false);
         AppCompatDelegate.setDefaultNightMode(
@@ -43,11 +43,11 @@ public class MainActivity extends AppCompatActivity {
         splashOverlay = findViewById(R.id.splash_overlay);
         mainContent = findViewById(R.id.main_content);
 
-        // Only show splash on first launch, not on config changes (dark mode toggle)
+        // Tampilkan splash screen hanya saat pertama kali dibuka
         if (savedInstanceState == null) {
             showSplash();
         } else {
-            // Skip splash on recreation (e.g., dark mode switch)
+            // Lewati splash jika activity dibuat ulang (misal ganti tema)
             splashOverlay.setVisibility(View.GONE);
             mainContent.setVisibility(View.VISIBLE);
         }
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         TextView title = findViewById(R.id.splash_title);
         TextView subtitle = findViewById(R.id.splash_subtitle);
 
-        // Logo: scale up + fade in
+        // Animasi Logo: membesar dan muncul
         logo.setAlpha(0f);
         logo.setScaleX(0.5f);
         logo.setScaleY(0.5f);
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 .setStartDelay(200)
                 .start();
 
-        // Title: slide up + fade in
+        // Animasi Judul: naik ke atas dan muncul
         title.setAlpha(0f);
         title.setTranslationY(30f);
         title.animate()
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 .setStartDelay(600)
                 .start();
 
-        // Subtitle: slide up + fade in
+        // Animasi Subjudul: naik ke atas dan muncul
         subtitle.setAlpha(0f);
         subtitle.setTranslationY(20f);
         subtitle.animate()
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 .setStartDelay(900)
                 .start();
 
-        // After delay, crossfade to main content
+        // Pindah ke konten utama setelah jeda waktu (Crossfade)
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             mainContent.setVisibility(View.VISIBLE);
             mainContent.setAlpha(0f);
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.view_pager);
         bottomNav = findViewById(R.id.bottom_navigation);
 
-        // Set up ViewPager2 with adapter
+        // Setup ViewPager2 dengan FragmentStateAdapter
         viewPager.setAdapter(new FragmentStateAdapter(this) {
             @NonNull
             @Override
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Sync ViewPager2 swipe → BottomNav selection
+        // Sinkronisasi geser ViewPager2 -> navigasi bawah
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Sync BottomNav tap → ViewPager2 page
+        // Sinkronisasi klik navigasi bawah -> geser ViewPager2
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_home) {

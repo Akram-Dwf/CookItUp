@@ -15,6 +15,6 @@ public class HomeViewModel extends ViewModel {
     public final MutableLiveData<List<Meal>> searchResults = new MutableLiveData<>();
     public final MutableLiveData<Boolean> isSearching = new MutableLiveData<>(false);
 
-    // Preserve RecyclerView scroll position across config changes (dark mode switch)
+    // Simpan posisi scroll RecyclerView saat ganti tema
     public Parcelable recyclerViewState;
 }

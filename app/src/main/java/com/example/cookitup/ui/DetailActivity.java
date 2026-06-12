@@ -119,11 +119,11 @@ public class DetailActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Fallback: load meal detail from local SQLite when offline.
-     */
+    // Load dari SQLite jika sedang offline
     private void loadFromLocalDatabase(String mealId) {
+        // Gunakan ExecutorService agar query SQLite berjalan di background thread (Syarat Lab)
         ExecutorService executor = Executors.newSingleThreadExecutor();
+        // Handler untuk kembali ke Main UI Thread (Syarat Lab)
         Handler handler = new Handler(Looper.getMainLooper());
 
         executor.execute(() -> {

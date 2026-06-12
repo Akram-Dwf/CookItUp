@@ -77,12 +77,12 @@ public class HomeFragment extends Fragment {
         emptyHomeLayout = view.findViewById(R.id.layout_empty_home);
         recyclerView = view.findViewById(R.id.recycler_view);
 
-        // RecyclerView performance optimizations
+        // Optimasi performa RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setItemViewCacheSize(20);
         recyclerView.setHasFixedSize(false);
 
-        // Create adapter ONCE and reuse — prevents heavy re-inflation on mode switch
+        // Buat adapter 1x dan gunakan ulang agar switch mode mulus
         adapter = new MealAdapter(new ArrayList<>());
         adapter.setOnItemClickCallback(data -> {
             if (getActivity() != null) {
@@ -96,12 +96,12 @@ public class HomeFragment extends Fragment {
 
         sharedPreferences = requireActivity().getSharedPreferences("cookitup_prefs", Context.MODE_PRIVATE);
         
-        // Use activity scope so ViewModel survives fragment replacement and dark mode toggle!
+        // Pakai scope activity agar ViewModel bertahan saat ganti fragment/tema
         viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
 
         btnThemeToggle = view.findViewById(R.id.btn_theme_toggle);
         btnThemeToggle.setOnClickListener(v -> {
-            // Save scroll position BEFORE mode switch recreates activity
+            // Simpan posisi scroll sebelum ganti tema
             if (recyclerView.getLayoutManager() != null) {
                 viewModel.recyclerViewState = recyclerView.getLayoutManager().onSaveInstanceState();
             }
@@ -119,7 +119,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        // Restore chips from ViewModel
+        // Kembalikan daftar bahan dari ViewModel
         for (String ing : viewModel.ingredients) {
             addChip(ing);
         }
@@ -150,7 +150,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        // Observe ViewModel data
+        // Pantau data ViewModel
         viewModel.isSearching.observe(getViewLifecycleOwner(), isSearching -> {
             if (isSearching) {
                 showSkeleton();
@@ -165,7 +165,7 @@ public class HomeFragment extends Fragment {
 
         viewModel.searchResults.observe(getViewLifecycleOwner(), meals -> {
             if (meals != null) {
-                // Show/hide empty state based on results
+                // Tampilkan/sembunyikan pesan kosong
                 if (meals.isEmpty() && viewModel.ingredients.isEmpty()) {
                     emptyHomeLayout.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.GONE);
@@ -174,10 +174,10 @@ public class HomeFragment extends Fragment {
                     recyclerView.setVisibility(View.VISIBLE);
                 }
 
-                // Reuse adapter — just swap data, don't recreate
+                // Gunakan ulang adapter, ganti datanya saja
                 adapter.setData(new ArrayList<>(meals));
 
-                // Restore scroll position after mode switch
+                // Kembalikan posisi scroll setelah ganti tema
                 if (viewModel.recyclerViewState != null && recyclerView.getLayoutManager() != null) {
                     recyclerView.getLayoutManager().onRestoreInstanceState(viewModel.recyclerViewState);
                     viewModel.recyclerViewState = null;
@@ -187,7 +187,7 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * Show skeleton loading placeholder and start shimmer animation.
+     * Tampilkan skeleton loading
      */
     private void showSkeleton() {
         skeletonContainer.setVisibility(View.VISIBLE);
@@ -195,7 +195,7 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * Hide skeleton with fade out.
+     * Sembunyikan skeleton
      */
     private void hideSkeleton() {
         skeletonContainer.setVisibility(View.GONE);
@@ -277,7 +277,7 @@ public class HomeFragment extends Fragment {
                 }
             }
 
-            // Cap results for smooth performance during mode switch
+            // Batasi hasil maksimal untuk performa
             if (intersectionList.size() > MAX_RESULTS) {
                 intersectionList = intersectionList.subList(0, MAX_RESULTS);
             }

@@ -83,7 +83,9 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void loadFavorites() {
+        // Gunakan ExecutorService agar query SQLite berjalan di background thread (Syarat Lab)
         ExecutorService executor = Executors.newSingleThreadExecutor();
+        // Handler untuk kembali ke Main UI Thread (Syarat Lab)
         Handler handler = new Handler(Looper.getMainLooper());
 
         executor.execute(() -> {
