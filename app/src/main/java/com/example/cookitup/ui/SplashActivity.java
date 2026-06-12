@@ -4,11 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,7 +14,7 @@ import com.example.cookitup.R;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private static final int SPLASH_DURATION = 2000;
+    private static final int SPLASH_DURATION = 2500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,35 +32,43 @@ public class SplashActivity extends AppCompatActivity {
         TextView title = findViewById(R.id.splash_title);
         TextView subtitle = findViewById(R.id.splash_subtitle);
 
-        // Logo scale + fade animation
-        AnimationSet logoAnim = new AnimationSet(true);
-        ScaleAnimation scale = new ScaleAnimation(
-                0.5f, 1f, 0.5f, 1f,
-                Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF, 0.5f);
-        scale.setDuration(800);
-        AlphaAnimation fadeIn = new AlphaAnimation(0f, 1f);
-        fadeIn.setDuration(800);
-        logoAnim.addAnimation(scale);
-        logoAnim.addAnimation(fadeIn);
-        logo.startAnimation(logoAnim);
+        // Logo: start invisible, then scale up + fade in
+        logo.setAlpha(0f);
+        logo.setScaleX(0.5f);
+        logo.setScaleY(0.5f);
+        logo.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(800)
+                .setStartDelay(200)
+                .start();
 
-        // Title slide up + fade
-        AlphaAnimation titleFade = new AlphaAnimation(0f, 1f);
-        titleFade.setDuration(600);
-        titleFade.setStartOffset(400);
-        title.startAnimation(titleFade);
+        // Title: fade in with slide up
+        title.setAlpha(0f);
+        title.setTranslationY(30f);
+        title.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(600)
+                .setStartDelay(600)
+                .start();
 
-        // Subtitle fade
-        AlphaAnimation subtitleFade = new AlphaAnimation(0f, 1f);
-        subtitleFade.setDuration(600);
-        subtitleFade.setStartOffset(700);
-        subtitle.startAnimation(subtitleFade);
+        // Subtitle: fade in
+        subtitle.setAlpha(0f);
+        subtitle.setTranslationY(20f);
+        subtitle.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(600)
+                .setStartDelay(900)
+                .start();
 
         // Navigate to main after delay
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             Intent intent = new Intent(SplashActivity.this, MainActivity.class);
             startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             finish();
         }, SPLASH_DURATION);
     }

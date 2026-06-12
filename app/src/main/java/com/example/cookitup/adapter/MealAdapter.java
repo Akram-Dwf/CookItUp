@@ -24,6 +24,11 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.ViewHolder> {
         this.meals = meals;
     }
 
+    public void setData(ArrayList<Meal> newMeals) {
+        this.meals = newMeals;
+        notifyDataSetChanged();
+    }
+
     public void setOnItemClickCallback(OnItemClickCallback onItemClickCallback) {
         this.onItemClickCallback = onItemClickCallback;
     }

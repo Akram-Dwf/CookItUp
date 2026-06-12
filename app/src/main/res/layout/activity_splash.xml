@@ -11,8 +11,7 @@
         android:id="@+id/splash_logo"
         android:layout_width="140dp"
         android:layout_height="140dp"
-        android:src="@mipmap/ic_launcher"
-        android:alpha="0" />
+        android:src="@mipmap/ic_launcher_round" />
 
     <TextView
         android:id="@+id/splash_title"
@@ -23,7 +22,7 @@
         android:textColor="@color/primary"
         android:textSize="32sp"
         android:textStyle="bold"
-        android:alpha="0" />
+        android:fontFamily="sans-serif-medium" />
 
     <TextView
         android:id="@+id/splash_subtitle"
@@ -32,7 +31,6 @@
         android:layout_marginTop="8dp"
         android:text="@string/txt_subtitle"
         android:textColor="@color/on_surface_variant"
-        android:textSize="16sp"
-        android:alpha="0" />
+        android:textSize="16sp" />
 
 </LinearLayout>

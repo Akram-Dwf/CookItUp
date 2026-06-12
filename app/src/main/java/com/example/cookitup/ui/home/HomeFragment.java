@@ -42,7 +42,6 @@ import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
 
-    private static final int MAX_RESULTS = 20;
 
     private EditText etIngredient;
     private android.widget.ImageButton btnAddIngredient;
@@ -80,6 +79,18 @@ public class HomeFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setItemViewCacheSize(20);
         recyclerView.setHasFixedSize(false);
+
+        // Create adapter ONCE and reuse — prevents heavy re-inflation on mode switch
+        adapter = new MealAdapter(new ArrayList<>());
+        adapter.setOnItemClickCallback(data -> {
+            if (getActivity() != null) {
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                intent.putExtra("meal_id", data.getIdMeal());
+                intent.putExtra("meal_name", data.getStrMeal());
+                startActivity(intent);
+            }
+        });
+        recyclerView.setAdapter(adapter);
 
         sharedPreferences = requireActivity().getSharedPreferences("cookitup_prefs", Context.MODE_PRIVATE);
         
@@ -156,17 +167,8 @@ public class HomeFragment extends Fragment {
                     recyclerView.setVisibility(View.VISIBLE);
                 }
 
-                adapter = new MealAdapter(new ArrayList<>(meals));
-                recyclerView.setAdapter(adapter);
-
-                adapter.setOnItemClickCallback(data -> {
-                    if (getActivity() != null) {
-                        Intent intent = new Intent(getActivity(), DetailActivity.class);
-                        intent.putExtra("meal_id", data.getIdMeal());
-                        intent.putExtra("meal_name", data.getStrMeal());
-                        startActivity(intent);
-                    }
-                });
+                // Reuse adapter — just swap data, don't recreate
+                adapter.setData(new ArrayList<>(meals));
             }
         });
     }
@@ -263,10 +265,6 @@ public class HomeFragment extends Fragment {
                 }
             }
 
-            // Cap results to MAX_RESULTS to prevent UI lag
-            if (intersectionList.size() > MAX_RESULTS) {
-                intersectionList = intersectionList.subList(0, MAX_RESULTS);
-            }
 
             if (hasError && intersectionList.isEmpty()) {
                 btnRefresh.setVisibility(View.VISIBLE);
